@@ -6,6 +6,7 @@ import Login from './screens/Login'
 import Onboarding from './screens/Onboarding'
 import Dashboard from './screens/Dashboard'
 import Practice from './screens/Practice'
+import Question from './screens/Question'
 
 function App() {
   const [session, setSession] = useState(undefined)
@@ -30,6 +31,7 @@ function App() {
         <Route path="/onboarding" element={session ? <Onboarding /> : <Navigate to="/login" />} />
         <Route path="/dashboard" element={session ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/practice" element={session ? <Practice /> : <Navigate to="/login" />} />
+        <Route path="/question/:id" element={session ? <Question /> : <Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   )
