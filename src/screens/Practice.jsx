@@ -1,3 +1,5 @@
+import MathText from '../components/MathText'
+import 'katex/dist/katex.min.css'
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
@@ -159,7 +161,7 @@ export default function Practice() {
                         color: q.difficulty === 'easy' ? '#00C896' : q.difficulty === 'hard' ? '#FF6B6B' : '#F0A500',
                       }}>{q.difficulty}</span>}
                     </div>
-                    <div style={s.qItemText}>{q.body}</div>
+                    <div style={s.qItemText}><MathText text={q.body} /></div>
                   </div>
                   <div style={s.qArrow}>→</div>
                 </div>
