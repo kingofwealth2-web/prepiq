@@ -60,7 +60,6 @@ export default function MockResults() {
     <div style={s.shell}>
       <div style={s.content}>
 
-        {/* HERO */}
         <div style={s.hero}>
           <div style={s.heroKente} />
           <div style={s.scoreRing}>
@@ -79,7 +78,6 @@ export default function MockResults() {
           </div>
         </div>
 
-        {/* STATS */}
         <div style={s.statsRow}>
           <div style={s.statCard}>
             <div style={{ ...s.statNum, color:'#00C896' }}>{stats.correct}</div>
@@ -95,7 +93,6 @@ export default function MockResults() {
           </div>
         </div>
 
-        {/* TOPIC BREAKDOWN */}
         <div style={s.section}>
           <h3 style={s.sectionTitle}>Performance by topic</h3>
           {Object.entries(stats.topicMap).map(([topic, data]) => {
@@ -113,10 +110,12 @@ export default function MockResults() {
           })}
         </div>
 
-        {/* ACTIONS */}
         <div style={s.actions}>
           <button style={s.btnGold} onClick={() => navigate('/dashboard')}>
             Back to dashboard
+          </button>
+          <button style={s.btnOutline} onClick={() => navigate(`/mock/${id}/review`)}>
+            Review all answers
           </button>
           <button style={s.btnOutline} onClick={() => navigate('/mock')}>
             Take another exam
