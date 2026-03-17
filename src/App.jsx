@@ -7,6 +7,9 @@ import Onboarding from './screens/Onboarding'
 import Dashboard from './screens/Dashboard'
 import Practice from './screens/Practice'
 import Question from './screens/Question'
+import MockSetup from './screens/MockSetup'
+import MockExam from './screens/MockExam'
+import MockResults from './screens/MockResults'
 
 function App() {
   const [session, setSession] = useState(undefined)
@@ -32,6 +35,9 @@ function App() {
         <Route path="/dashboard" element={session ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/practice" element={session ? <Practice /> : <Navigate to="/login" />} />
         <Route path="/question/:id" element={session ? <Question /> : <Navigate to="/login" />} />
+        <Route path="/mock" element={session ? <MockSetup /> : <Navigate to="/login" />} />
+        <Route path="/mock/:id" element={session ? <MockExam /> : <Navigate to="/login" />} />
+        <Route path="/mock/:id/results" element={session ? <MockResults /> : <Navigate to="/login" />} /> 
       </Routes>
     </BrowserRouter>
   )
