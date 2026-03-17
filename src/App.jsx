@@ -10,6 +10,7 @@ import Question from './screens/Question'
 import MockSetup from './screens/MockSetup'
 import MockExam from './screens/MockExam'
 import MockResults from './screens/MockResults'
+import Performance from './screens/Performance'
 
 function App() {
   const [session, setSession] = useState(undefined)
@@ -38,6 +39,7 @@ function App() {
         <Route path="/mock" element={session ? <MockSetup /> : <Navigate to="/login" />} />
         <Route path="/mock/:id" element={session ? <MockExam /> : <Navigate to="/login" />} />
         <Route path="/mock/:id/results" element={session ? <MockResults /> : <Navigate to="/login" />} /> 
+        <Route path="/performance" element={session ? <Performance /> : <Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   )
