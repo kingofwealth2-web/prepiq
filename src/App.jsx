@@ -20,8 +20,14 @@ import Predictions from './screens/Predictions'
 import Profile from './screens/Profile'
 import Ama from './components/Ama'
 
+// Context for mobile menu — avoids prop drilling into every screen
+import { createContext, useContext } from 'react'
+export const MobileMenuContext = createContext({ open: false, setOpen: () => {} })
+export const useMobileMenu = () => useContext(MobileMenuContext)
+
 function AppRoutes() {
   const [session, setSession] = useState(undefined)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
@@ -37,29 +43,31 @@ function AppRoutes() {
   )
 
   return (
-    <BrowserRouter>
-      {session && <Ama />}
-      <Routes>
-        <Route path="/" element={<Navigate to={session ? '/dashboard' : '/signup'} />} />
-        <Route path="/signup" element={!session ? <SignUp /> : <Navigate to="/dashboard" />} />
-        <Route path="/login" element={!session ? <Login /> : <Navigate to="/dashboard" />} />
-        <Route path="/onboarding" element={session ? <Onboarding /> : <Navigate to="/login" />} />
-        <Route path="/dashboard" element={session ? <Dashboard /> : <Navigate to="/login" />} />
-        <Route path="/practice" element={session ? <Practice /> : <Navigate to="/login" />} />
-        <Route path="/question/:id" element={session ? <Question /> : <Navigate to="/login" />} />
-        <Route path="/mock" element={session ? <MockSetup /> : <Navigate to="/login" />} />
-        <Route path="/mock/:id" element={session ? <MockExam /> : <Navigate to="/login" />} />
-        <Route path="/mock/:id/results" element={session ? <MockResults /> : <Navigate to="/login" />} />
-        <Route path="/mock/:id/review" element={session ? <ExamReview /> : <Navigate to="/login" />} />
-        <Route path="/performance" element={session ? <Performance /> : <Navigate to="/login" />} />
-        <Route path="/plan" element={session ? <StudyPlan /> : <Navigate to="/login" />} />
-        <Route path="/flashcards" element={session ? <Flashcards /> : <Navigate to="/login" />} />
-        <Route path="/game" element={session ? <QuizGame /> : <Navigate to="/login" />} />
-        <Route path="/predictions" element={session ? <Predictions /> : <Navigate to="/login" />} />
-        <Route path="/profile" element={session ? <Profile /> : <Navigate to="/login" />} />
-        <Route path="/premium" element={session ? <Navigate to="/profile" /> : <Navigate to="/login" />} />
-      </Routes>
-    </BrowserRouter>
+    <MobileMenuContext.Provider value={{ open: mobileMenuOpen, setOpen: setMobileMenuOpen }}>
+      <BrowserRouter>
+        {session && <Ama />}
+        <Routes>
+          <Route path="/" element={<Navigate to={session ? '/dashboard' : '/signup'} />} />
+          <Route path="/signup" element={!session ? <SignUp /> : <Navigate to="/dashboard" />} />
+          <Route path="/login" element={!session ? <Login /> : <Navigate to="/dashboard" />} />
+          <Route path="/onboarding" element={session ? <Onboarding /> : <Navigate to="/login" />} />
+          <Route path="/dashboard" element={session ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route path="/practice" element={session ? <Practice /> : <Navigate to="/login" />} />
+          <Route path="/question/:id" element={session ? <Question /> : <Navigate to="/login" />} />
+          <Route path="/mock" element={session ? <MockSetup /> : <Navigate to="/login" />} />
+          <Route path="/mock/:id" element={session ? <MockExam /> : <Navigate to="/login" />} />
+          <Route path="/mock/:id/results" element={session ? <MockResults /> : <Navigate to="/login" />} />
+          <Route path="/mock/:id/review" element={session ? <ExamReview /> : <Navigate to="/login" />} />
+          <Route path="/performance" element={session ? <Performance /> : <Navigate to="/login" />} />
+          <Route path="/plan" element={session ? <StudyPlan /> : <Navigate to="/login" />} />
+          <Route path="/flashcards" element={session ? <Flashcards /> : <Navigate to="/login" />} />
+          <Route path="/game" element={session ? <QuizGame /> : <Navigate to="/login" />} />
+          <Route path="/predictions" element={session ? <Predictions /> : <Navigate to="/login" />} />
+          <Route path="/profile" element={session ? <Profile /> : <Navigate to="/login" />} />
+          <Route path="/premium" element={session ? <Navigate to="/profile" /> : <Navigate to="/login" />} />
+        </Routes>
+      </BrowserRouter>
+    </MobileMenuContext.Provider>
   )
 }
 

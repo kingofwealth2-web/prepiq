@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
+import MobileHeader from '../components/MobileHeader'
+import { useMobileMenu } from '../App'
 
 // Generate a real daily task list from weak topics and subjects
 function buildTaskList(weakTopics, userSubjects, examType) {
@@ -78,6 +80,7 @@ function buildTaskList(weakTopics, userSubjects, examType) {
 
 export default function StudyPlan() {
   const navigate = useNavigate()
+  const { open: mobileMenuOpen, setOpen: setMobileMenuOpen } = useMobileMenu()
   const [user, setUser] = useState(null)
   const [weakTopics, setWeakTopics] = useState([])
   const [tasks, setTasks] = useState([])
@@ -172,9 +175,10 @@ export default function StudyPlan() {
 
   return (
     <div style={s.shell}>
-      <Sidebar user={user} />
+      <Sidebar user={user} mobileOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       <main style={s.main}>
-        <div style={s.topbar}>
+        <MobileHeader title="Study Plan" onMenuOpen={() => setMobileMenuOpen(true)} />
+        <div style={{...s.topbar, display: 'flex'}}>
           <div style={s.topbarTitle}>Study Plan</div>
           {getDaysLeft() !== null && (
             <div style={s.countdown}>

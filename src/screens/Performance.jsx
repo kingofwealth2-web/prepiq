@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
+import MobileHeader from '../components/MobileHeader'
+import { useMobileMenu } from '../App'
 
 export default function Performance() {
   const navigate = useNavigate()
+  const { open: mobileMenuOpen, setOpen: setMobileMenuOpen } = useMobileMenu()
   const [user, setUser] = useState(null)
   const [stats, setStats] = useState(null)
   const [mockHistory, setMockHistory] = useState([])
@@ -62,10 +65,11 @@ export default function Performance() {
 
   return (
     <div style={s.shell}>
-      <Sidebar user={user} />
+      <Sidebar user={user} mobileOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       <main style={s.main}>
-        <div style={s.topbar}><div style={s.topbarTitle}>Performance</div></div>
-        <div style={s.content}>
+        <MobileHeader title="Performance" onMenuOpen={() => setMobileMenuOpen(true)} />
+        <div style={{...s.topbar, display: 'flex'}}><div style={s.topbarTitle}>Performance</div></div>
+        <div style={s.content} className="has-bottom-nav">
 
           <div style={s.hero}>
             <div style={s.kente} />
@@ -142,7 +146,7 @@ const s = {
   shell: { display: 'flex', minHeight: '100vh', background: 'var(--surface-mid)', fontFamily: 'var(--ff-sans)' },
   loadShell: { minHeight: '100vh', background: 'var(--surface-mid)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   spinner: { width: '32px', height: '32px', border: '3px solid var(--border-mid)', borderTopColor: 'var(--gold)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
-  main: { flex: 1, marginLeft: '220px', display: 'flex', flexDirection: 'column' },
+  main: { flex: 1, marginLeft: 'var(--sidebar-w)', display: 'flex', flexDirection: 'column' },
   topbar: { height: '56px', display: 'flex', alignItems: 'center', padding: '0 28px', background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
   topbarTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
   content: { flex: 1, padding: '24px 28px 60px' },

@@ -2,10 +2,14 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
+import MobileHeader from '../components/MobileHeader'
+import { useMobileMenu } from '../App'
 import MathText from '../components/MathText'
+import { gemini, parseJSON } from '../lib/gemini'
 
 export default function Practice() {
   const navigate = useNavigate()
+  const { open: mobileMenuOpen, setOpen: setMobileMenuOpen } = useMobileMenu()
   const [user, setUser] = useState(null)
   const [subjects, setSubjects] = useState([])
   const [questions, setQuestions] = useState([])
@@ -55,21 +59,22 @@ export default function Practice() {
     if (!aiSubject || !aiTopic.trim()) return
     setGeneratingAI(true); setAiQuestions([])
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
-        {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ role: 'user', parts: [{ text:
-              `Generate 5 WASSCE-style multiple choice questions for ${aiSubject.name} on the topic "${aiTopic}".
-Return ONLY a valid JSON array. Each object must have exactly:
-{"body":"the question","option_a":"A","option_b":"B","option_c":"C","option_d":"D","correct":"A","explanation":"why correct"}` }] }],
-          })
-        }
+      const { text } = await gemini(
+        `You are a WASSCE examiner creating verified multiple choice questions for ${aiSubject.name} on the topic "${aiTopic}".
+
+For each question you MUST:
+1. Write the question clearly
+2. Write 4 plausible options (A, B, C, D)
+3. Work out the correct answer step by step in your head
+4. Double-check your answer is definitely correct before marking it
+5. Only mark an answer as correct if you are 100% certain
+
+Return ONLY a valid JSON array of 5 questions. Each object must have exactly:
+{"body":"the question","option_a":"option text","option_b":"option text","option_c":"option text","option_d":"option text","correct":"A or B or C or D","explanation":"step-by-step working showing why the correct answer is right"}
+
+Do not guess. If you are not sure of the answer, choose a different question topic where you are certain.`
       )
-      const data = await response.json()
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]'
-      const parsed = JSON.parse(text.replace(/```json/g, '').replace(/```/g, '').trim())
+      const parsed = parseJSON(text)
       setAiQuestions(parsed.map((q, i) => ({
         id: `ai-${i}`, body: q.body, question_type: 'OBJ',
         subjects: { name: aiSubject.name }, topics: { name: aiTopic },
@@ -90,13 +95,14 @@ Return ONLY a valid JSON array. Each object must have exactly:
 
   return (
     <div style={s.shell}>
-      <Sidebar user={user} />
+      <Sidebar user={user} mobileOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       <main style={s.main}>
-        <div style={s.topbar}>
+        <MobileHeader title="Practice" onMenuOpen={() => setMobileMenuOpen(true)} />
+        <div style={{...s.topbar, display: 'flex'}}>
           <div style={s.topbarTitle}>Practice</div>
           <button style={s.btnPrimary} onClick={() => navigate('/question/random')}>Random question</button>
         </div>
-        <div style={s.content}>
+        <div style={s.content} className="has-bottom-nav">
 
           {/* Mode toggle */}
           <div style={s.modeToggle}>
@@ -144,6 +150,9 @@ Return ONLY a valid JSON array. Each object must have exactly:
                 <div style={s.kente} />
                 <h3 style={s.aiPanelTitle}>Generate questions on any topic</h3>
                 <p style={s.aiPanelSub}>Get 5 fresh WASSCE-style questions instantly</p>
+                <div style={s.aiDisclaimer}>
+                  ⚠️ AI-generated questions are not from official WAEC papers. Always verify answers with your textbook or teacher.
+                </div>
               </div>
               <div style={s.aiControls}>
                 <select style={s.select} value={aiSubject?.id || ''} onChange={e => setAiSubject(subjects.find(s => s.id === e.target.value) || null)}>
@@ -204,7 +213,7 @@ Return ONLY a valid JSON array. Each object must have exactly:
 
 const s = {
   shell: { display: 'flex', minHeight: '100vh', background: 'var(--surface-mid)', fontFamily: 'var(--ff-sans)' },
-  main: { flex: 1, marginLeft: '220px', display: 'flex', flexDirection: 'column' },
+  main: { flex: 1, marginLeft: 'var(--sidebar-w)', display: 'flex', flexDirection: 'column' },
   topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
   topbarTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
   btnPrimary: { padding: '9px 18px', background: 'var(--forest)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.84rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
@@ -220,6 +229,7 @@ const s = {
   aiPanelHeader: { marginBottom: '14px' },
   aiPanelTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '3px' },
   aiPanelSub: { fontSize: '0.78rem', color: 'var(--ink-muted)' },
+  aiDisclaimer: { marginTop: '8px', fontSize: '0.76rem', color: 'var(--gold)', background: 'var(--gold-pale)', border: '1px solid var(--gold-border)', borderRadius: 'var(--r-sm)', padding: '8px 12px', lineHeight: 1.5 },
   aiControls: { display: 'flex', gap: '8px', flexWrap: 'wrap' },
   aiInput: { flex: 1, minWidth: '200px', padding: '9px 13px', background: 'var(--surface-mid)', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontSize: '0.84rem', fontFamily: 'var(--ff-sans)', outline: 'none' },
   aiLoading: { display: 'flex', alignItems: 'center', gap: '7px', marginTop: '14px' },

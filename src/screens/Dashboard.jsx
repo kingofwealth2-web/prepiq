@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
+import MobileHeader from '../components/MobileHeader'
+import { useMobileMenu } from '../App'
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const { open: mobileMenuOpen, setOpen: setMobileMenuOpen } = useMobileMenu()
   const [user, setUser] = useState(null)
   const [streak, setStreak] = useState(0)
   const [stats, setStats] = useState({ questions: 0, accuracy: 0, mocks: 0 })
@@ -100,7 +103,7 @@ export default function Dashboard() {
 
   return (
     <div style={s.shell}>
-      <Sidebar user={user} />
+      <Sidebar user={user} mobileOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       <main style={s.main}>
 
         {/* Offline banner */}
@@ -110,7 +113,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div style={s.topbar}>
+        <MobileHeader title="Dashboard" onMenuOpen={() => setMobileMenuOpen(true)} />
+        <div style={{...s.topbar, display: 'flex'}}>
           <div style={s.topbarTitle}>Dashboard</div>
           <div style={s.topbarRight}>
             {getDaysLeft() !== null && (

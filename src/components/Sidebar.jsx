@@ -1,14 +1,27 @@
 import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useTheme } from '../context/ThemeContext'
 import { useIsMobile } from '../hooks/useMediaQuery'
-import BottomNav from './BottomNav'
 
-export default function Sidebar({ user }) {
+export default function Sidebar({ user, mobileOpen, onClose }) {
   const navigate = useNavigate()
   const path = window.location.pathname
   const { isDark, toggleTheme } = useTheme()
   const isMobile = useIsMobile()
+
+  // Close on route change
+  useEffect(() => { if (mobileOpen) onClose?.() }, [path])
+
+  // Trap body scroll when open on mobile
+  useEffect(() => {
+    if (isMobile && mobileOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [isMobile, mobileOpen])
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard', icon: '⊞' },
@@ -27,59 +40,104 @@ export default function Sidebar({ user }) {
     navigate('/login')
   }
 
-  // On mobile, render the bottom nav instead
-  if (isMobile) return <BottomNav />
+  const handleNav = (navPath) => {
+    navigate(navPath)
+    if (isMobile) onClose?.()
+  }
+
+  const sidebarVisible = !isMobile || mobileOpen
 
   return (
-    <aside style={s.sidebar}>
-      <div style={s.logoWrap}>
-        <div style={s.logoMark}>P</div>
-        <div style={s.logoName}>Prep<em style={s.em}>IQ</em></div>
-      </div>
-      <div style={s.kente} />
-      <nav style={s.nav}>
-        <div style={s.navLabel}>Menu</div>
-        {navItems.map(item => (
-          <button key={item.path}
-            style={{ ...s.navItem, ...(path === item.path ? s.navActive : {}) }}
-            onClick={() => navigate(item.path)}>
-            <span style={s.icon}>{item.icon}</span>
-            <span>{item.label}</span>
-            {path === item.path && <span style={s.dot} />}
-          </button>
-        ))}
-        <div style={s.divider} />
-        <button style={s.premBtn} onClick={() => navigate('/premium')}>
-          <span style={s.icon}>💎</span><span>Go Premium</span>
-        </button>
-      </nav>
-      <div style={s.footer}>
-        <button style={s.themeToggle} onClick={toggleTheme} title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>
-          <span style={s.themeIcon}>{isDark ? '☀️' : '🌙'}</span>
-          <span style={s.themeLabel}>{isDark ? 'Light mode' : 'Dark mode'}</span>
-          <div style={s.themeTrack}>
-            <div style={{ ...s.themeThumb, transform: isDark ? 'translateX(14px)' : 'translateX(0)' }} />
-          </div>
-        </button>
-        <div style={s.userRow}>
-          <div style={s.avatar}>{user?.full_name?.[0]?.toUpperCase() || 'P'}</div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={s.userName}>{user?.full_name?.split(' ')[0] || 'Student'}</div>
-            <div style={s.userPlan}>{user?.plan === 'premium' ? 'Premium' : 'Free plan'}</div>
-          </div>
-          <button style={s.logoutBtn} onClick={handleLogout} title="Log out">↩</button>
+    <>
+      {/* Mobile backdrop */}
+      {isMobile && mobileOpen && (
+        <div style={s.backdrop} onClick={onClose} />
+      )}
+
+      {/* Sidebar */}
+      <aside style={{
+        ...s.sidebar,
+        ...(isMobile ? s.sidebarMobile : {}),
+        ...(isMobile && mobileOpen ? s.sidebarMobileOpen : {}),
+      }}>
+        <div style={s.logoWrap}>
+          <div style={s.logoMark}>P</div>
+          <div style={s.logoName}>Prep<em style={s.em}>IQ</em></div>
+          {isMobile && (
+            <button style={s.closeBtn} onClick={onClose}>✕</button>
+          )}
         </div>
-      </div>
-    </aside>
+        <div style={s.kente} />
+
+        <nav style={s.nav}>
+          <div style={s.navLabel}>Menu</div>
+          {navItems.map(item => (
+            <button key={item.path}
+              style={{ ...s.navItem, ...(path === item.path ? s.navActive : {}) }}
+              onClick={() => handleNav(item.path)}>
+              <span style={s.icon}>{item.icon}</span>
+              <span>{item.label}</span>
+              {path === item.path && <span style={s.dot} />}
+            </button>
+          ))}
+          <div style={s.divider} />
+          <button style={s.premBtn} onClick={() => handleNav('/premium')}>
+            <span style={s.icon}>💎</span><span>Go Premium</span>
+          </button>
+        </nav>
+
+        <div style={s.footer}>
+          <button style={s.themeToggle} onClick={toggleTheme}>
+            <span style={s.themeIcon}>{isDark ? '☀️' : '🌙'}</span>
+            <span style={s.themeLabel}>{isDark ? 'Light mode' : 'Dark mode'}</span>
+            <div style={s.themeTrack}>
+              <div style={{ ...s.themeThumb, transform: isDark ? 'translateX(14px)' : 'translateX(0)' }} />
+            </div>
+          </button>
+          <div style={s.userRow}>
+            <div style={s.avatar}>{user?.full_name?.[0]?.toUpperCase() || 'P'}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={s.userName}>{user?.full_name?.split(' ')[0] || 'Student'}</div>
+              <div style={s.userPlan}>{user?.plan === 'premium' ? 'Premium' : 'Free plan'}</div>
+            </div>
+            <button style={s.logoutBtn} onClick={handleLogout} title="Log out">↩</button>
+          </div>
+        </div>
+      </aside>
+    </>
   )
 }
 
 const s = {
-  sidebar: { width: '220px', flexShrink: 0, background: 'var(--forest-mid)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 50, borderRight: '1px solid var(--border)' },
-  logoWrap: { padding: '24px 20px 14px', display: 'flex', alignItems: 'center', gap: '10px' },
+  backdrop: {
+    position: 'fixed', inset: 0, zIndex: 49,
+    background: 'rgba(0,0,0,0.5)',
+    backdropFilter: 'blur(2px)',
+    WebkitBackdropFilter: 'blur(2px)',
+    animation: 'fadeIn 0.2s ease',
+  },
+  sidebar: {
+    width: '220px', flexShrink: 0,
+    background: 'var(--forest-mid)',
+    display: 'flex', flexDirection: 'column',
+    position: 'fixed', top: 0, left: 0, bottom: 0,
+    zIndex: 50,
+    borderRight: '1px solid rgba(247,243,238,0.06)',
+  },
+  sidebarMobile: {
+    transform: 'translateX(-100%)',
+    transition: 'transform 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+    boxShadow: 'none',
+  },
+  sidebarMobileOpen: {
+    transform: 'translateX(0)',
+    boxShadow: '4px 0 32px rgba(0,0,0,0.4)',
+  },
+  logoWrap: { padding: '20px 16px 14px', display: 'flex', alignItems: 'center', gap: '10px' },
   logoMark: { width: '32px', height: '32px', borderRadius: '9px', background: 'var(--gold-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--forest)', flexShrink: 0 },
-  logoName: { fontFamily: 'var(--ff-serif)', fontSize: '1.2rem', fontWeight: '700', color: '#F7F3EE', fontStyle: 'normal' },
+  logoName: { fontFamily: 'var(--ff-serif)', fontSize: '1.2rem', fontWeight: '700', color: '#F7F3EE', fontStyle: 'normal', flex: 1 },
   em: { color: 'var(--gold-light)', fontStyle: 'italic' },
+  closeBtn: { background: 'transparent', border: 'none', color: 'rgba(247,243,238,0.4)', cursor: 'pointer', fontSize: '1rem', padding: '4px', lineHeight: 1, flexShrink: 0 },
   kente: { height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)', marginBottom: '6px' },
   nav: { flex: 1, padding: '6px 10px', display: 'flex', flexDirection: 'column', gap: '1px', overflowY: 'auto' },
   navLabel: { fontSize: '0.62rem', fontWeight: '600', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(247,243,238,0.28)', padding: '6px 10px 8px' },

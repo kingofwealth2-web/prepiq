@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate, useParams } from 'react-router-dom'
 import MathText from '../components/MathText'
+import { gemini } from '../lib/gemini'
 
 export default function Question() {
   const navigate = useNavigate()
@@ -85,20 +86,26 @@ export default function Question() {
     if (cached?.body) { setExplanation(cached.body); setLoadingExplain(false); return }
     try {
       const correctOption = options.find(o => o.is_correct)
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
-        {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ role: 'user', parts: [{ text:
-              `You are a WASSCE/BECE tutor for Ghanaian students. Explain this question clearly and step by step.\n\nQuestion: ${question.body}\nOptions: A) ${options[0]?.body} B) ${options[1]?.body} C) ${options[2]?.body} D) ${options[3]?.body}\nCorrect answer: ${correctOption?.label} — ${correctOption?.body}\nSubject: ${question.subjects?.name} | Topic: ${question.topics?.name}\n\nExplain why ${correctOption?.label} is correct and why the other options are wrong. Be clear and helpful for a Ghanaian student.`
-            }] }],
-            systemInstruction: { parts: [{ text: 'You are a helpful WASSCE tutor. Give clear, step-by-step explanations. Never be condescending.' }] }
-          })
-        }
+      const { text } = await gemini(
+        `You are a WASSCE/BECE tutor for Ghanaian students. A student needs help with this question.
+
+Question: ${question.body}
+Options:
+A) ${options[0]?.body}
+B) ${options[1]?.body}
+C) ${options[2]?.body}
+D) ${options[3]?.body}
+Subject: ${question.subjects?.name} | Topic: ${question.topics?.name}
+
+Your task:
+1. Work through this question step by step using your knowledge
+2. Identify the correct answer yourself through reasoning — do not just accept the marked answer
+3. If the marked answer (${correctOption?.label}: ${correctOption?.body}) is correct, explain clearly why
+4. If you believe the marked answer may be incorrect, say so honestly and explain what you think the correct answer is
+5. Explain why each wrong option is wrong
+6. Be clear, encouraging and helpful for a Ghanaian secondary school student`,
+        'You are an honest, knowledgeable WASSCE tutor. Always reason through problems yourself. Never blindly justify an answer you think is wrong — academic integrity matters more than agreement.'
       )
-      const data = await response.json()
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Could not generate explanation.'
       setExplanation(text)
       await supabase.from('explanations').upsert({ question_id: question.id, body: text }, { onConflict: 'question_id' })
     } catch { setExplanation('Could not load explanation right now. Please try again.') }

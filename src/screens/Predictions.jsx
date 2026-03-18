@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
+import MobileHeader from '../components/MobileHeader'
+import { useMobileMenu } from '../App'
 
 // Curated high-frequency WASSCE topics based on historical WAEC patterns
 const FALLBACK_PREDICTIONS = {
@@ -89,6 +91,7 @@ function getFallbackPredictions(subjectName) {
 
 export default function Predictions() {
   const navigate = useNavigate()
+  const { open: mobileMenuOpen, setOpen: setMobileMenuOpen } = useMobileMenu()
   const [user, setUser] = useState(null)
   const [subjects, setSubjects] = useState([])
   const [selectedSubject, setSelectedSubject] = useState(null)
@@ -229,9 +232,10 @@ export default function Predictions() {
 
   return (
     <div style={s.shell}>
-      <Sidebar user={user} />
+      <Sidebar user={user} mobileOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       <main style={s.main}>
-        <div style={s.topbar}>
+        <MobileHeader title="Predictions" onMenuOpen={() => setMobileMenuOpen(true)} />
+        <div style={{...s.topbar, display: 'flex'}}>
           <div style={s.topbarTitle}>Predictions</div>
           <div style={s.topbarBadge}>WASSCE {new Date().getFullYear()}</div>
         </div>
