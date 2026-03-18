@@ -45,3 +45,39 @@ export function useAccent() {
   if (!ctx) throw new Error('useAccent must be used within AccentProvider')
   return ctx
 }
+
+export function AccentPicker({ onPick }) {
+  const { accent, setAccent } = useAccent()
+
+  function pick(key) {
+    setAccent(key)
+    onPick?.(key)
+  }
+
+  return (
+    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+      {Object.entries(ACCENT_THEMES).map(([key, t]) => (
+        <button
+          key={key}
+          title={t.name}
+          onClick={() => pick(key)}
+          style={{
+            width: '34px',
+            height: '34px',
+            borderRadius: '50%',
+            background: t.swatch,
+            border: accent === key ? '3px solid #fff' : '3px solid transparent',
+            outline: accent === key ? `2px solid ${t.primary}` : 'none',
+            cursor: 'pointer',
+            transform: accent === key ? 'scale(1.15)' : 'scale(1)',
+            transition: 'transform .2s cubic-bezier(0.34,1.56,0.64,1), outline .15s',
+            flexShrink: 0,
+          }}
+        />
+      ))}
+      <span style={{ fontSize: '.78rem', color: 'var(--ink-muted)', marginLeft: '4px' }}>
+        {ACCENT_THEMES[accent]?.name}
+      </span>
+    </div>
+  )
+}
