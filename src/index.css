@@ -34,7 +34,7 @@
   --amber-soft: rgba(245,158,11,0.1);
   --amber-border: rgba(245,158,11,0.25);
   --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 20px; --r-2xl: 24px;
-  --sidebar-w: 220px;
+  --sidebar-w: 56px;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
   --shadow-md: 0 4px 20px rgba(0,0,0,0.5);
   --ff: 'Inter', system-ui, -apple-system, sans-serif;

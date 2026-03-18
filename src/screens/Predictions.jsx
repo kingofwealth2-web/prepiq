@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import MobileHeader from '../components/MobileHeader'
 import { useMobileMenu } from '../App'
+import PremiumGate from '../components/PremiumGate'
 
 // Curated high-frequency WASSCE topics based on historical WAEC patterns
 const FALLBACK_PREDICTIONS = {

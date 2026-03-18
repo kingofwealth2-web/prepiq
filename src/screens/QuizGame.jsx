@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
+import { updateStreak } from '../lib/streak'
 import MathText from '../components/MathText'
 
 export default function QuizGame() {
@@ -73,12 +75,21 @@ export default function QuizGame() {
     setTimeout(() => moveNext(), 1500)
   }
 
-  function moveNext() {
+  async function moveNext() {
     setCurrent(prev => {
       const next = prev + 1
-      if (next >= questions.length) { setPhase('finished'); return prev }
-      startQuestionTimer(); return next
-    }); setShowResult(null)
+      if (next >= questions.length) {
+        setPhase('finished')
+        // Update streak — completing a quiz counts as activity
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (user) updateStreak(user.id)
+        })
+        return prev
+      }
+      startQuestionTimer()
+      return next
+    })
+    setShowResult(null)
   }
 
   const q = questions[current]
