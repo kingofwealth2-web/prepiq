@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect, useState, createContext, useContext } from 'react'
 import { supabase } from './lib/supabase'
 import { AccentProvider } from './context/AccentContext'
+import { ThemeProvider } from './context/ThemeContext'
 import SignUp from './screens/SignUp'
 import Login from './screens/Login'
 import Onboarding from './screens/Onboarding'
@@ -71,8 +72,10 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <AccentProvider>
-      <AppRoutes />
-    </AccentProvider>
+    <ThemeProvider>
+      <AccentProvider>
+        <AppRoutes />
+      </AccentProvider>
+    </ThemeProvider>
   )
 }

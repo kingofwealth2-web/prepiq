@@ -5,10 +5,12 @@ import Sidebar from '../components/Sidebar'
 import MobileHeader from '../components/MobileHeader'
 import { useMobileMenu } from '../App'
 import { AccentPicker } from '../context/AccentContext'
+import { useTheme } from '../context/ThemeContext'
 
 export default function Profile() {
   const navigate = useNavigate()
   const { open: mobileOpen, setOpen: setMobileOpen } = useMobileMenu()
+  const { isDark, toggle } = useTheme()
   const [user, setUser] = useState(null)
   const [streak, setStreak] = useState(null)
   const [stats, setStats] = useState({ mocks: 0, questions: 0 })
@@ -201,6 +203,27 @@ export default function Profile() {
                 Accent colour
               </div>
               <AccentPicker />
+            </div>
+
+            {/* Theme toggle */}
+            <div style={{ marginBottom: '4px', paddingBottom: '16px', borderBottom: '1px solid var(--border)' }}>
+              <div style={{ fontSize: '.7rem', fontWeight: '600', color: 'var(--ink-muted)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: '12px' }}>
+                Theme
+              </div>
+              <button
+                onClick={toggle}
+                style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%', padding: '11px 14px', background: 'var(--surface)', border: '1px solid var(--border-mid)', borderRadius: 'var(--r-md)', cursor: 'pointer', fontFamily: 'var(--ff)' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: isDark ? 'rgba(245,158,11,0.12)' : 'rgba(139,92,246,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', flexShrink: 0 }}>
+                  {isDark ? '☀️' : '🌙'}
+                </div>
+                <div style={{ flex: 1, textAlign: 'left' }}>
+                  <div style={{ fontSize: '.86rem', fontWeight: '600', color: 'var(--ink)', marginBottom: '2px' }}>{isDark ? 'Switch to light mode' : 'Switch to dark mode'}</div>
+                  <div style={{ fontSize: '.73rem', color: 'var(--ink-muted)' }}>{isDark ? 'Easier on the eyes in bright environments' : 'Better for low-light studying'}</div>
+                </div>
+                <div style={{ width: '38px', height: '22px', borderRadius: '11px', background: isDark ? 'var(--accent-primary)' : 'var(--border-mid)', position: 'relative', flexShrink: 0, transition: 'background .2s' }}>
+                  <div style={{ position: 'absolute', top: '3px', left: isDark ? '19px' : '3px', width: '16px', height: '16px', borderRadius: '50%', background: '#fff', transition: 'left .2s', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }} />
+                </div>
+              </button>
             </div>
 
             {/* Other settings */}

@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAccent } from '../context/AccentContext'
+import { useTheme } from '../context/ThemeContext'
 import { useIsMobile } from '../hooks/useMediaQuery'
 
 const NAV = [
@@ -20,6 +21,7 @@ export default function Sidebar({ user, mobileOpen, onClose }) {
   const navigate = useNavigate()
   const path = window.location.pathname
   const { theme } = useAccent()
+  const { isDark, toggle } = useTheme()
   const isMobile = useIsMobile()
 
   useEffect(() => { if (mobileOpen) onClose?.() }, [path])
@@ -116,6 +118,7 @@ const s = {
   navIcon: { fontSize: '0.9rem', width: '18px', textAlign: 'center', flexShrink: 0 },
   activeDot: { width: '5px', height: '5px', borderRadius: '50%', marginLeft: 'auto', flexShrink: 0, transition: 'background 0.4s' },
   divider: { height: '1px', background: 'rgba(255,255,255,0.06)', margin: '8px 0' },
+  themeBtn: { display: 'flex', alignItems: 'center', gap: '9px', padding: '9px 11px', borderRadius: 'var(--r-md)', border: '1px solid var(--border)', background: 'transparent', color: 'var(--ink-muted)', cursor: 'pointer', width: '100%', textAlign: 'left', transition: 'background .15s' },
   premBtn: { display: 'flex', alignItems: 'center', gap: '9px', padding: '9px 11px', borderRadius: '10px', border: '1px solid', background: 'rgba(245,158,11,0.08)', fontSize: '0.83rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left', width: '100%', fontFamily: 'var(--ff)' },
   footer: { padding: '10px', borderTop: '1px solid rgba(255,255,255,0.06)' },
   userRow: { display: 'flex', alignItems: 'center', gap: '9px', padding: '9px 10px', borderRadius: '10px', background: 'rgba(255,255,255,0.04)' },

@@ -95,3 +95,85 @@ select option { background: #111118; color: var(--ink); }
 .fc-face { position:absolute; inset:0; border-radius:20px; padding:32px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; -webkit-backface-visibility:hidden; backface-visibility:hidden; }
 .fc-front { background:var(--surface-solid); border:1px solid var(--border); }
 .fc-back { background:var(--accent-soft); border:1px solid var(--accent-border); transform:rotateY(180deg); }
+
+/* ── Light mode ── */
+[data-theme="light"] {
+  --bg: #F4F2F8;
+  --bg-2: #EDE9F4;
+  --bg-3: #E8E3F0;
+  --surface: rgba(255,255,255,0.75);
+  --surface-solid: #FFFFFF;
+  --surface-raised: rgba(255,255,255,0.95);
+  --border: rgba(0,0,0,0.08);
+  --border-mid: rgba(0,0,0,0.12);
+  --border-strong: rgba(0,0,0,0.2);
+
+  /* Readable ink — not pure black, warm dark */
+  --ink: #1C1826;
+  --ink-mid: #3D3550;
+  --ink-muted: #6B6080;
+  --ink-faint: #9B91AA;
+
+  /* Semantic — same hues, lighter backgrounds */
+  --green: #0E8A5F;
+  --green-soft: rgba(14,138,95,0.1);
+  --green-border: rgba(14,138,95,0.25);
+  --red: #C0392B;
+  --red-soft: rgba(192,57,43,0.08);
+  --red-border: rgba(192,57,43,0.2);
+  --amber: #B45309;
+  --amber-soft: rgba(180,83,9,0.08);
+  --amber-border: rgba(180,83,9,0.2);
+
+  /* Glass becomes frosted white */
+  --glass-bg: rgba(255,255,255,0.7);
+  --glass-border: rgba(0,0,0,0.08);
+  --glass-blur: blur(20px);
+
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* Light mode background — soft gradient, no harsh blobs */
+[data-theme="light"] body::before {
+  opacity: 0.12;
+}
+
+/* Light mode body */
+[data-theme="light"] body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* Light mode inputs */
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="email"],
+[data-theme="light"] input[type="password"],
+[data-theme="light"] input[type="date"],
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+  background: rgba(255,255,255,0.9);
+  border-color: var(--border-mid);
+  color: var(--ink);
+}
+
+[data-theme="light"] select option {
+  background: #fff;
+  color: var(--ink);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+}
+
+/* Light mode flashcard back */
+[data-theme="light"] .fc-front {
+  background: #fff;
+  border-color: var(--border-mid);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+[data-theme="light"] .fc-back {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+}
