@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate, useParams } from 'react-router-dom'
 import MathText from '../components/MathText'
+import { gemini } from '../lib/gemini'
 
 export default function ExamReview() {
   const navigate = useNavigate()
@@ -47,14 +48,9 @@ export default function ExamReview() {
     if (cached?.body) { setExplanations(prev => ({ ...prev, [qId]: cached.body })); setLoadingExplain(prev => ({ ...prev, [qId]: false })); return }
     try {
       const correctOpt = response.allOptions.find(o => o.is_correct)
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
-        { method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text:
-            `You are a WASSCE tutor. Explain this question step by step for a Ghanaian student.\nQuestion: ${response.questions?.body}\nOptions: ${response.allOptions.map(o => `${o.label}) ${o.body}`).join(' | ')}\nCorrect answer: ${correctOpt?.label} — ${correctOpt?.body}\nSubject: ${response.questions?.subjects?.name} | Topic: ${response.questions?.topics?.name}\nBe clear, concise and encouraging.`
-          }] }] }) })
-      const data = await res.json()
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Could not generate explanation.'
+      const { text } = await gemini(
+        `You are a WASSCE tutor. Explain this question step by step for a Ghanaian student.\nQuestion: ${response.questions?.body}\nOptions: ${response.allOptions.map(o => `${o.label}) ${o.body}`).join(' | ')}\nCorrect answer: ${correctOpt?.label} — ${correctOpt?.body}\nSubject: ${response.questions?.subjects?.name} | Topic: ${response.questions?.topics?.name}\nBe clear, concise and encouraging.`
+      )
       setExplanations(prev => ({ ...prev, [qId]: text }))
       await supabase.from('explanations').upsert({ question_id: qId, body: text }, { onConflict: 'question_id' })
     } catch { setExplanations(prev => ({ ...prev, [qId]: 'Could not load explanation. Try again.' })) }
@@ -71,7 +67,7 @@ export default function ExamReview() {
     <div style={s.shell}>
       <div style={s.kente} />
       <div style={s.header}>
-        <button style={s.backBtn} onClick={() => navigate('/mock')}>← Back</button>
+        <button style={s.backBtn} onClick={() => navigate(`/mock/${id}/results`)}>← Results</button>
         <div style={s.headerTitle}>Exam Review</div>
         <div style={s.headerScore}>{score}% · {correctCount}/{responses.length}</div>
       </div>
@@ -146,6 +142,19 @@ export default function ExamReview() {
             </div>
           ))}
         </div>
+        {/* Sticky bottom action bar */}
+        <div style={s.bottomBar}>
+          <button style={s.bottomBtnOutline} onClick={() => navigate(`/mock/${id}/results`)}>
+            ← Back to results
+          </button>
+          <button style={s.bottomBtnOutline} onClick={() => navigate('/mock')}>
+            New exam
+          </button>
+          <button style={s.bottomBtnPrimary} onClick={() => navigate('/plan')}>
+            Update study plan
+          </button>
+        </div>
+
       </div>
     </div>
   )
@@ -192,4 +201,7 @@ const s = {
   optText: { fontSize: '0.86rem', color: 'var(--ink)', flex: 1 },
   explainBtn: { width: '100%', padding: '10px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink-muted)', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)', marginTop: '4px' },
   explainBox: { background: 'var(--surface-mid)', borderRadius: 'var(--r-sm)', padding: '16px', marginTop: '12px', border: '1px solid var(--border)' },
+  bottomBar: { position: 'sticky', bottom: 0, background: 'var(--surface)', borderTop: '1px solid var(--border)', padding: '12px 0', display: 'flex', gap: '10px', marginTop: '24px' },
+  bottomBtnOutline: { flex: 1, padding: '11px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.84rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  bottomBtnPrimary: { flex: 1, padding: '11px', background: 'var(--forest-mid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.84rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
 }

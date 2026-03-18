@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useNavigate, useParams } from 'react-router-dom'
 import MathText from '../components/MathText'
 import { gemini } from '../lib/gemini'
+import { updateStreak } from '../lib/streak'
 
 export default function Question() {
   const navigate = useNavigate()
@@ -58,12 +59,8 @@ export default function Question() {
     if (!selected) return
     setSubmitted(true)
     const { data: { user } } = await supabase.auth.getUser()
-    const today = new Date().toISOString().split('T')[0]
-
-    // Update streak
-    await supabase.from('streaks').upsert({
-      user_id: user.id, last_active_date: today, current_streak: 1,
-    }, { onConflict: 'user_id' })
+    // Update streak correctly
+    await updateStreak(user.id)
 
     // Track solo practice attempt (exam_id null = not part of a mock)
     try {

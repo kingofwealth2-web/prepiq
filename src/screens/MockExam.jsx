@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import MathText from '../components/MathText'
+import { updateStreak } from '../lib/streak'
 
 export default function MockExam() {
   const navigate = useNavigate()
@@ -20,7 +21,19 @@ export default function MockExam() {
   useEffect(() => {
     if (!loading && !submitted) {
       timerRef.current = setInterval(() => {
-        setTimeLeft(t => { if (t <= 1) { clearInterval(timerRef.current); handleSubmit(); return 0 } return t - 1 })
+        setTimeLeft(t => {
+          if (t <= 1) { clearInterval(timerRef.current); handleSubmit(); return 0 }
+          const next = t - 1
+          // Persist timer every 5 seconds to avoid excessive writes
+          if (next % 5 === 0) {
+            try {
+              const saved = sessionStorage.getItem(`prepiq-mock-${id}`)
+              const current = saved ? JSON.parse(saved) : {}
+              sessionStorage.setItem(`prepiq-mock-${id}`, JSON.stringify({ ...current, timeLeft: next }))
+            } catch { /* ignore */ }
+          }
+          return next
+        })
       }, 1000)
     }
     return () => clearInterval(timerRef.current)
@@ -32,17 +45,39 @@ export default function MockExam() {
     const { data } = await supabase.from('questions').select(`*, subjects(name), answer_options(*)`).in('id', questionIds)
     const optMap = {}
     data?.forEach(q => { optMap[q.id] = q.answer_options.sort((a, b) => a.label.localeCompare(b.label)) })
-    setQuestions(data || []); setOptions(optMap); setLoading(false)
+    setQuestions(data || []); setOptions(optMap)
+
+    // Restore saved state if user refreshed mid-exam
+    const savedKey = `prepiq-mock-${id}`
+    const saved = sessionStorage.getItem(savedKey)
+    if (saved) {
+      try {
+        const { answers: savedAnswers, timeLeft: savedTime } = JSON.parse(saved)
+        if (savedAnswers) setAnswers(savedAnswers)
+        if (savedTime && savedTime > 0) setTimeLeft(savedTime)
+      } catch { /* ignore */ }
+    }
+
+    setLoading(false)
   }
 
   const handleSelect = (questionId, optionId) => {
     if (submitted) return
-    setAnswers(prev => ({ ...prev, [questionId]: optionId }))
+    setAnswers(prev => {
+      const updated = { ...prev, [questionId]: optionId }
+      // Persist so refresh doesn't lose answers
+      try { sessionStorage.setItem(`prepiq-mock-${id}`, JSON.stringify({ answers: updated, timeLeft })) } catch { /* ignore */ }
+      return updated
+    })
   }
 
   async function handleSubmit() {
     if (submitted) return
     setSubmitted(true); clearInterval(timerRef.current)
+
+    // Clear saved state
+    try { sessionStorage.removeItem(`prepiq-mock-${id}`) } catch { /* ignore */ }
+
     const responses = questions.map(q => {
       const selectedId = answers[q.id]
       const selectedOption = options[q.id]?.find(o => o.id === selectedId)
@@ -50,6 +85,11 @@ export default function MockExam() {
     })
     await supabase.from('mock_responses').insert(responses)
     await supabase.from('mock_exams').update({ submitted_at: new Date().toISOString() }).eq('id', id)
+
+    // Update streak — completing a mock counts as activity
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) await updateStreak(user.id)
+
     navigate(`/mock/${id}/results`, { state: { questions, answers, options } })
   }
 
