@@ -15,7 +15,7 @@ export default function Flashcards() {
   const [finished, setFinished] = useState(false)
 
   useEffect(() => {
-    supabase.from('subjects').select('*').order('name').then(({ data }) => setSubjects(data || []))
+    supabase.from('subjects').select('*').order('name').then(({ data }) => { const seen = new Set(); setSubjects((data || []).filter(s => { if (seen.has(s.name)) return false; seen.add(s.name); return true; })) })
   }, [])
 
   async function generateCards(subject) {

@@ -29,7 +29,14 @@ export default function Practice() {
 
   async function loadSubjects() {
     const { data } = await supabase.from('subjects').select('*').order('name')
-    setSubjects(data || [])
+    // Deduplicate by name in case of duplicate rows in DB
+    const seen = new Set()
+    const unique = (data || []).filter(s => {
+      if (seen.has(s.name)) return false
+      seen.add(s.name)
+      return true
+    })
+    setSubjects(unique)
   }
 
   async function loadQuestions() {

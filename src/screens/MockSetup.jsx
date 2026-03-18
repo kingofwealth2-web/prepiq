@@ -8,7 +8,7 @@ export default function MockSetup() {
   const [selected, setSelected] = useState({ subject: '', year: '', mode: 'past_paper' })
 
   useEffect(() => {
-    supabase.from('subjects').select('*').order('name').then(({ data }) => setSubjects(data || []))
+    supabase.from('subjects').select('*').order('name').then(({ data }) => { const seen = new Set(); setSubjects((data || []).filter(s => { if (seen.has(s.name)) return false; seen.add(s.name); return true; })) })
   }, [])
 
   const years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i)

@@ -23,7 +23,7 @@ export default function QuizGame() {
   const questionTimerRef = useRef(null)
 
   useEffect(() => {
-    supabase.from('subjects').select('*').order('name').then(({ data }) => setSubjects(data || []))
+    supabase.from('subjects').select('*').order('name').then(({ data }) => { const seen = new Set(); setSubjects((data || []).filter(s => { if (seen.has(s.name)) return false; seen.add(s.name); return true; })) })
     return () => { clearInterval(timerRef.current); clearInterval(questionTimerRef.current) }
   }, [])
 
