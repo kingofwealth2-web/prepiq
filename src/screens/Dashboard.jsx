@@ -97,7 +97,7 @@ export default function Dashboard() {
 
   if (loading) return (
     <div style={s.loadShell}>
-      <div style={s.loadLogo}>Prep<em style={{ color: 'var(--gold-light)', fontStyle: 'italic' }}>IQ</em></div>
+      <div style={s.loadLogo}>Prep<em style={{ color: 'var(--accent-light)', fontStyle: 'italic' }}>IQ</em></div>
     </div>
   )
 
@@ -146,7 +146,7 @@ export default function Dashboard() {
             <div style={s.heroRing}>
               <svg width="90" height="90" viewBox="0 0 90 90" style={{ transform: 'rotate(-90deg)' }}>
                 <circle cx="45" cy="45" r="38" fill="none" stroke="rgba(247,243,238,0.15)" strokeWidth="7" />
-                <circle cx="45" cy="45" r="38" fill="none" stroke="var(--gold)" strokeWidth="7"
+                <circle cx="45" cy="45" r="38" fill="none" stroke="var(--accent-primary)" strokeWidth="7"
                   strokeLinecap="round" strokeDasharray="239"
                   strokeDashoffset={239 - (239 * readinessScore / 100)} />
               </svg>
@@ -223,56 +223,56 @@ export default function Dashboard() {
 }
 
 const s = {
-  shell: { display: 'flex', minHeight: '100vh', background: 'var(--cream)', fontFamily: 'var(--ff-sans)' },
-  loadShell: { minHeight: '100vh', background: 'var(--forest)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  loadLogo: { fontFamily: 'var(--ff-serif)', fontSize: '2.5rem', fontWeight: '700', color: '#F7F3EE' },
+  shell: { display: 'flex', minHeight: '100vh', background: 'var(--bg)', fontFamily: 'var(--ff)' },
+  loadShell: { minHeight: '100vh', background: 'var(--surface-solid)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  loadLogo: { fontFamily: 'var(--ff)', fontSize: '2.5rem', fontWeight: '700', color: '#F7F3EE' },
   main: { flex: 1, marginLeft: 'var(--sidebar-w)', display: 'flex', flexDirection: 'column', minHeight: '100vh' },
-  offlineBanner: { background: 'var(--gold-pale)', borderBottom: '1px solid var(--gold-border)', color: 'var(--gold)', padding: '10px 28px', fontSize: '0.84rem', fontWeight: '500' },
-  topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
-  topbarTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
+  offlineBanner: { background: 'var(--accent-soft)', borderBottom: '1px solid var(--accent-border)', color: 'var(--accent-primary)', padding: '10px 28px', fontSize: '0.84rem', fontWeight: '500' },
+  topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', background: 'var(--surface-solid)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
+  topbarTitle: { fontFamily: 'var(--ff)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
   topbarRight: { display: 'flex', alignItems: 'center', gap: '8px' },
-  daysChip: { display: 'flex', alignItems: 'center', gap: '5px', background: 'var(--red-pale)', border: '1px solid rgba(200,16,46,0.15)', padding: '5px 10px', borderRadius: '20px' },
-  daysNum: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--red)', lineHeight: 1 },
+  daysChip: { display: 'flex', alignItems: 'center', gap: '5px', background: 'var(--red-soft)', border: '1px solid rgba(200,16,46,0.15)', padding: '5px 10px', borderRadius: '20px' },
+  daysNum: { fontFamily: 'var(--ff)', fontSize: '1rem', fontWeight: '700', color: 'var(--red)', lineHeight: 1 },
   daysLabel: { fontSize: '0.68rem', color: 'var(--red)', fontWeight: '500' },
-  readinessBadge: { display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--gold-pale)', border: '1px solid var(--gold-border)', padding: '5px 12px', borderRadius: '20px' },
-  readinessNum: { fontFamily: 'var(--ff-serif)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--gold)', lineHeight: 1 },
-  readinessLabel: { fontSize: '0.68rem', color: 'var(--gold)', fontWeight: '500' },
+  readinessBadge: { display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--accent-soft)', border: '1px solid var(--accent-border)', padding: '5px 12px', borderRadius: '20px' },
+  readinessNum: { fontFamily: 'var(--ff)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--accent-primary)', lineHeight: 1 },
+  readinessLabel: { fontSize: '0.68rem', color: 'var(--accent-primary)', fontWeight: '500' },
   content: { flex: 1, padding: '20px 20px 60px' },
-  hero: { background: 'var(--forest-mid)', borderRadius: 'var(--r-xl)', padding: '24px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', position: 'relative', overflow: 'hidden', animation: 'fadeUp 0.4s ease both' },
+  hero: { background: 'var(--surface-solid)', borderRadius: 'var(--r-xl)', padding: '24px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', position: 'relative', overflow: 'hidden', animation: 'fadeUp 0.4s ease both' },
   kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
   heroLeft: { flex: 1, minWidth: 0 },
   heroGreeting: { fontSize: '0.78rem', color: 'rgba(247,243,238,0.5)', marginBottom: '2px', fontWeight: '500' },
-  heroName: { fontFamily: 'var(--ff-serif)', fontSize: '1.8rem', fontWeight: '700', color: '#F7F3EE', marginBottom: '12px', letterSpacing: '-0.02em', lineHeight: 1.1 },
+  heroName: { fontFamily: 'var(--ff)', fontSize: '1.8rem', fontWeight: '700', color: '#F7F3EE', marginBottom: '12px', letterSpacing: '-0.02em', lineHeight: 1.1 },
   heroBadges: { display: 'flex', gap: '7px', flexWrap: 'wrap' },
-  badgeGold: { background: 'rgba(200,136,10,0.2)', color: 'var(--gold-light)', border: '1px solid rgba(200,136,10,0.3)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '600' },
+  badgeGold: { background: 'rgba(200,136,10,0.2)', color: 'var(--accent-light)', border: '1px solid rgba(200,136,10,0.3)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '600' },
   badgeNeutral: { background: 'rgba(247,243,238,0.08)', color: 'rgba(247,243,238,0.55)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '500' },
   badgeTeal: { background: 'rgba(0,158,115,0.15)', color: '#00C896', padding: '4px 10px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '500' },
   heroRing: { position: 'relative', width: '90px', height: '90px', flexShrink: 0 },
-  ringNum: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontFamily: 'var(--ff-serif)', fontSize: '1.5rem', fontWeight: '700', color: 'var(--gold-light)', lineHeight: 1 },
+  ringNum: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontFamily: 'var(--ff)', fontSize: '1.5rem', fontWeight: '700', color: 'var(--accent-light)', lineHeight: 1 },
   statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '10px', marginBottom: '14px' },
-  statCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '16px', boxShadow: 'var(--shadow-sm)', animation: 'fadeUp 0.4s ease both' },
-  statNum: { fontFamily: 'var(--ff-serif)', fontSize: '1.8rem', fontWeight: '700', color: 'var(--gold)', lineHeight: 1, marginBottom: '4px' },
+  statCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '16px', boxShadow: 'none', animation: 'fadeUp 0.4s ease both' },
+  statNum: { fontFamily: 'var(--ff)', fontSize: '1.8rem', fontWeight: '700', color: 'var(--accent-primary)', lineHeight: 1, marginBottom: '4px' },
   statLabel: { fontSize: '0.75rem', color: 'var(--ink-mid)', fontWeight: '600', marginBottom: '2px' },
   statSub: { fontSize: '0.67rem', color: 'var(--ink-faint)' },
-  predBanner: { background: 'var(--forest-mid)', borderRadius: 'var(--r-lg)', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', cursor: 'pointer', position: 'relative', overflow: 'hidden' },
+  predBanner: { background: 'var(--surface-solid)', borderRadius: 'var(--r-lg)', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', cursor: 'pointer', position: 'relative', overflow: 'hidden' },
   predKente: { position: 'absolute', top: 0, left: 0, bottom: 0, width: '3px', background: 'repeating-linear-gradient(180deg,#C8880A 0,#C8880A 12px,#009E73 12px,#009E73 24px,#C8102E 24px,#C8102E 36px,#1A5DC8 36px,#1A5DC8 48px)' },
   predIcon: { fontSize: '1.4rem', flexShrink: 0, marginLeft: '8px' },
   predText: { flex: 1, minWidth: 0 },
   predTitle: { fontSize: '0.84rem', fontWeight: '600', color: '#F7F3EE', marginBottom: '2px' },
   predSub: { fontSize: '0.72rem', color: 'rgba(247,243,238,0.45)' },
-  premBadge: { background: 'rgba(200,136,10,0.2)', color: 'var(--gold-light)', border: '1px solid rgba(200,136,10,0.3)', padding: '3px 8px', borderRadius: '20px', fontSize: '0.68rem', fontWeight: '700', flexShrink: 0 },
+  premBadge: { background: 'rgba(200,136,10,0.2)', color: 'var(--accent-light)', border: '1px solid rgba(200,136,10,0.3)', padding: '3px 8px', borderRadius: '20px', fontSize: '0.68rem', fontWeight: '700', flexShrink: 0 },
   dashGrid: { display: 'grid', gridTemplateColumns: '1fr', gap: '12px' },
-  dashCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '18px', boxShadow: 'var(--shadow-sm)' },
+  dashCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '18px', boxShadow: 'none' },
   dashCardHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' },
-  dashCardTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)' },
-  dashCardLink: { background: 'transparent', border: 'none', color: 'var(--gold)', fontSize: '0.78rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)', fontWeight: '600' },
+  dashCardTitle: { fontFamily: 'var(--ff)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)' },
+  dashCardLink: { background: 'transparent', border: 'none', color: 'var(--accent-primary)', fontSize: '0.78rem', cursor: 'pointer', fontFamily: 'var(--ff)', fontWeight: '600' },
   emptyState: { textAlign: 'center', padding: '14px 0', marginBottom: '14px' },
   emptyIcon: { fontSize: '2rem', marginBottom: '8px' },
   emptyText: { fontSize: '0.88rem', fontWeight: '600', color: 'var(--ink)', marginBottom: '4px' },
   emptySub: { fontSize: '0.75rem', color: 'var(--ink-faint)' },
-  btnPrimary: { width: '100%', padding: '12px', background: 'var(--forest-mid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  btnPrimary: { width: '100%', padding: '12px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
   actionGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' },
-  actionBtn: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '14px 8px', background: 'var(--surface-mid)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', cursor: 'pointer', fontFamily: 'var(--ff-sans)', transition: 'background 0.15s' },
+  actionBtn: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '14px 8px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', cursor: 'pointer', fontFamily: 'var(--ff)', transition: 'background 0.15s' },
   actionIcon: { fontSize: '1.3rem' },
   actionLabel: { fontSize: '0.72rem', fontWeight: '500', color: 'var(--ink-muted)', textAlign: 'center', lineHeight: 1.3 },
 }

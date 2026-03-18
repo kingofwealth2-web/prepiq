@@ -225,7 +225,7 @@ export default function Predictions() {
   }
 
   const getPatternStyle = type => {
-    if (type === 'always_appears') return { color: 'var(--gold)', label: '🔴 Always appears' }
+    if (type === 'always_appears') return { color: 'var(--accent-primary)', label: '🔴 Always appears' }
     if (type === 'cycle_topic') return { color: '#1A5DC8', label: '🔵 Cycle topic' }
     return { color: 'var(--red)', label: '🔺 Overdue' }
   }
@@ -333,42 +333,42 @@ export default function Predictions() {
 }
 
 const s = {
-  shell: { display: 'flex', minHeight: '100vh', background: 'var(--cream)', fontFamily: 'var(--ff-sans)' },
+  shell: { display: 'flex', minHeight: '100vh', background: 'var(--bg)', fontFamily: 'var(--ff)' },
   main: { flex: 1, marginLeft: 'var(--sidebar-w)', display: 'flex', flexDirection: 'column' },
-  topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
-  topbarTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
-  topbarBadge: { background: 'var(--gold-pale)', color: 'var(--gold)', border: '1px solid var(--gold-border)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '600' },
+  topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', background: 'var(--surface-solid)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
+  topbarTitle: { fontFamily: 'var(--ff)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
+  topbarBadge: { background: 'var(--accent-soft)', color: 'var(--accent-primary)', border: '1px solid var(--accent-border)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '600' },
   content: { flex: 1, padding: '20px 20px 60px', maxWidth: '800px' },
-  disclaimer: { background: 'var(--forest-mid)', borderRadius: 'var(--r-lg)', padding: '14px 18px', display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '14px', position: 'relative', overflow: 'hidden' },
+  disclaimer: { background: 'var(--surface-solid)', borderRadius: 'var(--r-lg)', padding: '14px 18px', display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '14px', position: 'relative', overflow: 'hidden' },
   kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
-  disclaimerTitle: { fontSize: '0.84rem', fontWeight: '600', color: 'var(--gold-light)', marginBottom: '3px' },
+  disclaimerTitle: { fontSize: '0.84rem', fontWeight: '600', color: 'var(--accent-light)', marginBottom: '3px' },
   disclaimerSub: { fontSize: '0.76rem', color: 'rgba(247,243,238,0.5)', lineHeight: 1.5 },
-  fallbackBanner: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '14px 16px', display: 'flex', gap: '12px', marginBottom: '14px', boxShadow: 'var(--shadow-sm)' },
+  fallbackBanner: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '14px 16px', display: 'flex', gap: '12px', marginBottom: '14px', boxShadow: 'none' },
   fallbackIcon: { fontSize: '1.3rem', flexShrink: 0 },
   fallbackTitle: { fontSize: '0.86rem', fontWeight: '600', color: 'var(--ink)', marginBottom: '3px' },
   fallbackSub: { fontSize: '0.76rem', color: 'var(--ink-muted)', lineHeight: 1.5 },
   subjectTabs: { display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '18px' },
-  subjectTab: { padding: '7px 14px', background: 'var(--surface)', border: '1.5px solid var(--border-mid)', borderRadius: '20px', color: 'var(--ink-muted)', fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--ff-sans)', transition: 'all 0.15s' },
-  subjectTabActive: { borderColor: 'var(--gold)', color: 'var(--gold)', background: 'var(--gold-pale)' },
-  loadingCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '40px', textAlign: 'center', boxShadow: 'var(--shadow-sm)' },
+  subjectTab: { padding: '7px 14px', background: 'var(--surface-solid)', border: '1.5px solid var(--border-mid)', borderRadius: '20px', color: 'var(--ink-muted)', fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--ff)', transition: 'all 0.15s' },
+  subjectTabActive: { borderColor: 'var(--accent-primary)', color: 'var(--accent-primary)', background: 'var(--accent-soft)' },
+  loadingCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '40px', textAlign: 'center', boxShadow: 'none' },
   genDots: { display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '14px' },
-  genDot: { width: '9px', height: '9px', borderRadius: '50%', background: 'var(--gold)', animation: 'pulse 1s infinite' },
+  genDot: { width: '9px', height: '9px', borderRadius: '50%', background: 'var(--accent-primary)', animation: 'pulse 1s infinite' },
   loadingText: { fontSize: '0.86rem', color: 'var(--ink-muted)' },
-  emptyCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '40px', textAlign: 'center', boxShadow: 'var(--shadow-sm)' },
+  emptyCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '40px', textAlign: 'center', boxShadow: 'none' },
   emptyIcon: { fontSize: '2.5rem', marginBottom: '12px' },
-  emptyTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '8px' },
+  emptyTitle: { fontFamily: 'var(--ff)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '8px' },
   emptySub: { fontSize: '0.84rem', color: 'var(--ink-muted)', marginBottom: '20px' },
   predHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' },
-  predTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)' },
-  regenBtn: { background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink-muted)', fontSize: '0.78rem', padding: '6px 14px', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
-  predCard: { display: 'flex', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', marginBottom: '8px', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' },
+  predTitle: { fontFamily: 'var(--ff)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)' },
+  regenBtn: { background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink-muted)', fontSize: '0.78rem', padding: '6px 14px', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  predCard: { display: 'flex', background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', marginBottom: '8px', overflow: 'hidden', boxShadow: 'none' },
   predAccent: { width: '4px', flexShrink: 0 },
   predCardContent: { flex: 1, padding: '14px 16px' },
   predCardHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px', flexWrap: 'wrap', gap: '8px' },
   predTopic: { fontSize: '0.92rem', fontWeight: '600', color: 'var(--ink)' },
   predPattern: { fontSize: '0.72rem', fontWeight: '600' },
   predRationale: { fontSize: '0.76rem', color: 'var(--ink-muted)', marginBottom: '10px', lineHeight: 1.4 },
-  predBar: { height: '5px', background: 'var(--cream-mid)', borderRadius: '3px', overflow: 'hidden' },
+  predBar: { height: '5px', background: 'rgba(255,255,255,.06)', borderRadius: '3px', overflow: 'hidden' },
   predBarFill: { height: '100%', borderRadius: '3px', transition: 'width 1s ease' },
-  btnPrimary: { width: '100%', padding: '13px', background: 'var(--forest-mid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)', marginTop: '4px' },
+  btnPrimary: { width: '100%', padding: '13px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)', marginTop: '4px' },
 }

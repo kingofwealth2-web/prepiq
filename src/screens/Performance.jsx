@@ -123,12 +123,12 @@ export default function Performance() {
   }
 
   const getGrade = score => {
-    if (score >= 80) return { grade: 'A1', color: 'var(--teal)' }
-    if (score >= 75) return { grade: 'B2', color: 'var(--teal)' }
-    if (score >= 70) return { grade: 'B3', color: 'var(--gold)' }
-    if (score >= 65) return { grade: 'C4', color: 'var(--gold)' }
-    if (score >= 60) return { grade: 'C5', color: 'var(--gold)' }
-    if (score >= 55) return { grade: 'C6', color: 'var(--gold)' }
+    if (score >= 80) return { grade: 'A1', color: 'var(--green)' }
+    if (score >= 75) return { grade: 'B2', color: 'var(--green)' }
+    if (score >= 70) return { grade: 'B3', color: 'var(--accent-primary)' }
+    if (score >= 65) return { grade: 'C4', color: 'var(--accent-primary)' }
+    if (score >= 60) return { grade: 'C5', color: 'var(--accent-primary)' }
+    if (score >= 55) return { grade: 'C6', color: 'var(--accent-primary)' }
     if (score >= 50) return { grade: 'D7', color: 'var(--red)' }
     return { grade: 'F9', color: 'var(--red)' }
   }
@@ -238,7 +238,7 @@ export default function Performance() {
                     date.setDate(date.getDate() - (34 - i))
                     const active = activityDates.has(date.toDateString())
                     return (
-                      <div key={i} style={{ ...s.heatCell, background: active ? 'var(--gold)' : 'var(--cream-mid)' }}
+                      <div key={i} style={{ ...s.heatCell, background: active ? 'var(--accent-primary)' : 'rgba(255,255,255,.06)' }}
                         title={date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
                       />
                     )
@@ -246,7 +246,7 @@ export default function Performance() {
                 </div>
                 <div style={s.heatLegend}>
                   <span style={s.heatLegendText}>Less</span>
-                  {['var(--cream-mid)', 'var(--gold-pale)', 'var(--gold-border)', 'var(--gold)'].map((bg, i) => (
+                  {['rgba(255,255,255,.06)', 'var(--accent-soft)', 'var(--accent-border)', 'var(--accent-primary)'].map((bg, i) => (
                     <div key={i} style={{ width: '12px', height: '12px', borderRadius: '3px', background: bg }} />
                   ))}
                   <span style={s.heatLegendText}>More</span>
@@ -261,43 +261,43 @@ export default function Performance() {
 }
 
 const s = {
-  shell: { display: 'flex', minHeight: '100vh', background: 'var(--cream)', fontFamily: 'var(--ff-sans)' },
-  loadShell: { minHeight: '100vh', background: 'var(--cream)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  spinner: { width: '32px', height: '32px', border: '3px solid var(--border-mid)', borderTopColor: 'var(--gold)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
+  shell: { display: 'flex', minHeight: '100vh', background: 'var(--bg)', fontFamily: 'var(--ff)' },
+  loadShell: { minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  spinner: { width: '32px', height: '32px', border: '3px solid var(--border-mid)', borderTopColor: 'var(--accent-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
   main: { flex: 1, marginLeft: 'var(--sidebar-w)', display: 'flex', flexDirection: 'column' },
-  topbar: { height: '56px', display: 'flex', alignItems: 'center', padding: '0 24px', background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
-  topbarTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
+  topbar: { height: '56px', display: 'flex', alignItems: 'center', padding: '0 24px', background: 'var(--surface-solid)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
+  topbarTitle: { fontFamily: 'var(--ff)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
   content: { flex: 1, padding: '20px 24px 60px' },
-  hero: { background: 'var(--forest-mid)', borderRadius: 'var(--r-xl)', padding: '24px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', position: 'relative', overflow: 'hidden', flexWrap: 'wrap', gap: '20px' },
+  hero: { background: 'var(--surface-solid)', borderRadius: 'var(--r-xl)', padding: '24px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', position: 'relative', overflow: 'hidden', flexWrap: 'wrap', gap: '20px' },
   kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
   heroLeft: {},
   heroLabel: { fontSize: '0.68rem', fontWeight: '600', letterSpacing: '0.12em', color: 'rgba(247,243,238,0.45)', textTransform: 'uppercase', marginBottom: '6px' },
-  heroGrade: { fontFamily: 'var(--ff-serif)', fontSize: '4rem', fontWeight: '700', lineHeight: 1, marginBottom: '8px' },
+  heroGrade: { fontFamily: 'var(--ff)', fontSize: '4rem', fontWeight: '700', lineHeight: 1, marginBottom: '8px' },
   heroSub: { fontSize: '0.8rem', color: 'rgba(247,243,238,0.45)' },
   heroStats: { display: 'flex', gap: '28px', flexWrap: 'wrap' },
   heroStat: { textAlign: 'center' },
-  heroStatNum: { fontFamily: 'var(--ff-serif)', fontSize: '1.8rem', fontWeight: '700', color: 'var(--gold-light)', lineHeight: 1 },
+  heroStatNum: { fontFamily: 'var(--ff)', fontSize: '1.8rem', fontWeight: '700', color: 'var(--accent-light)', lineHeight: 1 },
   heroStatLabel: { fontSize: '0.7rem', color: 'rgba(247,243,238,0.45)', marginTop: '3px' },
-  emptyCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '48px', textAlign: 'center', boxShadow: 'var(--shadow-sm)' },
+  emptyCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '48px', textAlign: 'center', boxShadow: 'none' },
   emptyIcon: { fontSize: '2.5rem', marginBottom: '12px' },
-  emptyTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '8px' },
+  emptyTitle: { fontFamily: 'var(--ff)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '8px' },
   emptySub: { fontSize: '0.84rem', color: 'var(--ink-muted)', marginBottom: '20px' },
-  btnPrimary: { padding: '12px 24px', background: 'var(--forest-mid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  btnPrimary: { padding: '12px 24px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
   grid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' },
-  card: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', marginBottom: '14px', boxShadow: 'var(--shadow-sm)' },
-  cardTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '16px' },
+  card: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', marginBottom: '14px', boxShadow: 'none' },
+  cardTitle: { fontFamily: 'var(--ff)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '16px' },
   empty: { fontSize: '0.84rem', color: 'var(--ink-muted)', textAlign: 'center', padding: '20px 0' },
-  link: { color: 'var(--gold)', cursor: 'pointer', fontWeight: '600' },
+  link: { color: 'var(--accent-primary)', cursor: 'pointer', fontWeight: '600' },
   subjectRow: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' },
   subjectName: { fontSize: '0.82rem', color: 'var(--ink)', width: '120px', flexShrink: 0 },
-  barWrap: { flex: 1, height: '5px', background: 'var(--cream-mid)', borderRadius: '3px', overflow: 'hidden' },
+  barWrap: { flex: 1, height: '5px', background: 'rgba(255,255,255,.06)', borderRadius: '3px', overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: '3px', transition: 'width 1s ease' },
   subjectScore: { fontSize: '0.8rem', fontWeight: '600', width: '36px', textAlign: 'right' },
   examRow: { display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 0', borderBottom: '1px solid var(--border)', cursor: 'pointer', transition: 'opacity 0.15s' },
   examNum: { fontSize: '0.7rem', color: 'var(--ink-faint)', width: '20px' },
   examDate: { fontSize: '0.82rem', color: 'var(--ink)', fontWeight: '500' },
   examDetail: { fontSize: '0.7rem', color: 'var(--ink-muted)' },
-  examGrade: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', width: '28px', textAlign: 'center' },
+  examGrade: { fontFamily: 'var(--ff)', fontSize: '1rem', fontWeight: '700', width: '28px', textAlign: 'center' },
   examScore: { fontSize: '0.84rem', fontWeight: '600', width: '36px', textAlign: 'right' },
   examArrow: { color: 'var(--ink-faint)', fontSize: '0.8rem', marginLeft: '2px' },
   heatWrap: { display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', marginBottom: '8px' },

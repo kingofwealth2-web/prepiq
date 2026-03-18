@@ -1,104 +1,96 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { useTheme } from '../context/ThemeContext'
+import { useAccent } from '../context/AccentContext'
 import { useIsMobile } from '../hooks/useMediaQuery'
+
+const NAV = [
+  { label: 'Dashboard',   path: '/dashboard',   icon: '⊞' },
+  { label: 'Practice',    path: '/practice',     icon: '📖' },
+  { label: 'Mock Exams',  path: '/mock',         icon: '📝' },
+  { label: 'Study Plan',  path: '/plan',         icon: '📅' },
+  { label: 'Flashcards',  path: '/flashcards',   icon: '🃏' },
+  { label: 'Performance', path: '/performance',  icon: '📊' },
+  { label: 'Predictions', path: '/predictions',  icon: '★' },
+  { label: 'Quiz Game',   path: '/game',         icon: '⚡' },
+  { label: 'Profile',     path: '/profile',      icon: '👤' },
+]
 
 export default function Sidebar({ user, mobileOpen, onClose }) {
   const navigate = useNavigate()
   const path = window.location.pathname
-  const { isDark, toggleTheme } = useTheme()
+  const { theme } = useAccent()
   const isMobile = useIsMobile()
 
-  // Close on route change
   useEffect(() => { if (mobileOpen) onClose?.() }, [path])
 
-  // Trap body scroll when open on mobile
   useEffect(() => {
-    if (isMobile && mobileOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
+    if (isMobile && mobileOpen) document.body.style.overflow = 'hidden'
+    else document.body.style.overflow = ''
     return () => { document.body.style.overflow = '' }
   }, [isMobile, mobileOpen])
 
-  const navItems = [
-    { label: 'Dashboard', path: '/dashboard', icon: '⊞' },
-    { label: 'Practice', path: '/practice', icon: '📖' },
-    { label: 'Mock Exams', path: '/mock', icon: '📝' },
-    { label: 'Study Plan', path: '/plan', icon: '📅' },
-    { label: 'Flashcards', path: '/flashcards', icon: '🃏' },
-    { label: 'Performance', path: '/performance', icon: '📊' },
-    { label: 'Predictions', path: '/predictions', icon: '★' },
-    { label: 'Quiz Game', path: '/game', icon: '⚡' },
-    { label: 'Profile', path: '/profile', icon: '👤' },
-  ]
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    navigate('/login')
-  }
-
-  const handleNav = (navPath) => {
-    navigate(navPath)
-    if (isMobile) onClose?.()
-  }
-
-  const sidebarVisible = !isMobile || mobileOpen
+  const handleNav = p => { navigate(p); if (isMobile) onClose?.() }
+  const handleLogout = async () => { await supabase.auth.signOut(); navigate('/login') }
 
   return (
     <>
-      {/* Mobile backdrop */}
       {isMobile && mobileOpen && (
         <div style={s.backdrop} onClick={onClose} />
       )}
 
-      {/* Sidebar */}
       <aside style={{
         ...s.sidebar,
         ...(isMobile ? s.sidebarMobile : {}),
-        ...(isMobile && mobileOpen ? s.sidebarMobileOpen : {}),
+        ...(isMobile && mobileOpen ? s.sidebarOpen : {}),
       }}>
+        {/* Logo */}
         <div style={s.logoWrap}>
-          <div style={s.logoMark}>P</div>
-          <div style={s.logoName}>Prep<em style={s.em}>IQ</em></div>
-          {isMobile && (
-            <button style={s.closeBtn} onClick={onClose}>✕</button>
-          )}
+          <div style={{ ...s.logoMark, background: `linear-gradient(135deg,${theme.primary},${theme.glow3})`, boxShadow: `0 4px 16px ${theme.soft}` }}>P</div>
+          <div style={s.logoText}>Prep<em style={{ ...s.em, color: theme.light }}>IQ</em></div>
+          {isMobile && <button style={s.closeBtn} onClick={onClose}>✕</button>}
         </div>
-        <div style={s.kente} />
 
+        {/* Nav */}
         <nav style={s.nav}>
           <div style={s.navLabel}>Menu</div>
-          {navItems.map(item => (
-            <button key={item.path}
-              style={{ ...s.navItem, ...(path === item.path ? s.navActive : {}) }}
-              onClick={() => handleNav(item.path)}>
-              <span style={s.icon}>{item.icon}</span>
-              <span>{item.label}</span>
-              {path === item.path && <span style={s.dot} />}
-            </button>
-          ))}
+          {NAV.map(item => {
+            const active = path === item.path
+            return (
+              <button key={item.path}
+                style={{
+                  ...s.navItem,
+                  ...(active ? { background: theme.soft, color: theme.light } : {}),
+                }}
+                onClick={() => handleNav(item.path)}
+              >
+                <span style={s.navIcon}>{item.icon}</span>
+                <span>{item.label}</span>
+                {active && (
+                  <span style={{ ...s.activeDot, background: theme.primary }} />
+                )}
+              </button>
+            )
+          })}
+
           <div style={s.divider} />
-          <button style={s.premBtn} onClick={() => handleNav('/premium')}>
-            <span style={s.icon}>💎</span><span>Go Premium</span>
+
+          <button style={{ ...s.premBtn, borderColor: 'rgba(245,158,11,0.3)', color: '#FCD34D' }}
+            onClick={() => handleNav('/premium')}>
+            <span style={s.navIcon}>💎</span>
+            <span>Go Premium</span>
           </button>
         </nav>
 
+        {/* Footer */}
         <div style={s.footer}>
-          <button style={s.themeToggle} onClick={toggleTheme}>
-            <span style={s.themeIcon}>{isDark ? '☀️' : '🌙'}</span>
-            <span style={s.themeLabel}>{isDark ? 'Light mode' : 'Dark mode'}</span>
-            <div style={s.themeTrack}>
-              <div style={{ ...s.themeThumb, transform: isDark ? 'translateX(14px)' : 'translateX(0)' }} />
-            </div>
-          </button>
           <div style={s.userRow}>
-            <div style={s.avatar}>{user?.full_name?.[0]?.toUpperCase() || 'P'}</div>
+            <div style={{ ...s.avatar, background: `linear-gradient(135deg,${theme.primary},${theme.glow3})` }}>
+              {user?.full_name?.[0]?.toUpperCase() || 'P'}
+            </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={s.userName}>{user?.full_name?.split(' ')[0] || 'Student'}</div>
-              <div style={s.userPlan}>{user?.plan === 'premium' ? 'Premium' : 'Free plan'}</div>
+              <div style={s.userPlan}>{user?.plan === 'premium' ? '💎 Premium' : 'Free plan'}</div>
             </div>
             <button style={s.logoutBtn} onClick={handleLogout} title="Log out">↩</button>
           </div>
@@ -109,53 +101,26 @@ export default function Sidebar({ user, mobileOpen, onClose }) {
 }
 
 const s = {
-  backdrop: {
-    position: 'fixed', inset: 0, zIndex: 49,
-    background: 'rgba(0,0,0,0.5)',
-    backdropFilter: 'blur(2px)',
-    WebkitBackdropFilter: 'blur(2px)',
-    animation: 'fadeIn 0.2s ease',
-  },
-  sidebar: {
-    width: '220px', flexShrink: 0,
-    background: 'var(--forest-mid)',
-    display: 'flex', flexDirection: 'column',
-    position: 'fixed', top: 0, left: 0, bottom: 0,
-    zIndex: 50,
-    borderRight: '1px solid rgba(247,243,238,0.06)',
-  },
-  sidebarMobile: {
-    transform: 'translateX(-100%)',
-    transition: 'transform 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
-    boxShadow: 'none',
-  },
-  sidebarMobileOpen: {
-    transform: 'translateX(0)',
-    boxShadow: '4px 0 32px rgba(0,0,0,0.4)',
-  },
-  logoWrap: { padding: '20px 16px 14px', display: 'flex', alignItems: 'center', gap: '10px' },
-  logoMark: { width: '32px', height: '32px', borderRadius: '9px', background: 'var(--gold-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--forest)', flexShrink: 0 },
-  logoName: { fontFamily: 'var(--ff-serif)', fontSize: '1.2rem', fontWeight: '700', color: '#F7F3EE', fontStyle: 'normal', flex: 1 },
-  em: { color: 'var(--gold-light)', fontStyle: 'italic' },
-  closeBtn: { background: 'transparent', border: 'none', color: 'rgba(247,243,238,0.4)', cursor: 'pointer', fontSize: '1rem', padding: '4px', lineHeight: 1, flexShrink: 0 },
-  kente: { height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)', marginBottom: '6px' },
-  nav: { flex: 1, padding: '6px 10px', display: 'flex', flexDirection: 'column', gap: '1px', overflowY: 'auto' },
-  navLabel: { fontSize: '0.62rem', fontWeight: '600', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(247,243,238,0.28)', padding: '6px 10px 8px' },
-  navItem: { display: 'flex', alignItems: 'center', gap: '9px', padding: '9px 11px', borderRadius: '9px', border: 'none', background: 'transparent', color: 'rgba(247,243,238,0.45)', fontSize: '0.84rem', fontWeight: '500', cursor: 'pointer', textAlign: 'left', width: '100%', fontFamily: 'var(--ff-sans)' },
-  navActive: { background: 'rgba(247,243,238,0.09)', color: '#F7F3EE' },
-  icon: { fontSize: '0.9rem', width: '18px', textAlign: 'center', flexShrink: 0 },
-  dot: { width: '5px', height: '5px', borderRadius: '50%', background: 'var(--gold-light)', marginLeft: 'auto' },
-  divider: { height: '1px', background: 'rgba(247,243,238,0.07)', margin: '8px 0' },
-  premBtn: { display: 'flex', alignItems: 'center', gap: '9px', padding: '9px 11px', borderRadius: '9px', border: '1px solid rgba(200,136,10,0.3)', background: 'rgba(200,136,10,0.08)', color: 'var(--gold-light)', fontSize: '0.84rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left', width: '100%', fontFamily: 'var(--ff-sans)' },
-  footer: { padding: '10px', borderTop: '1px solid rgba(247,243,238,0.06)', display: 'flex', flexDirection: 'column', gap: '6px' },
-  themeToggle: { display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 10px', borderRadius: '9px', border: '1px solid rgba(247,243,238,0.08)', background: 'rgba(247,243,238,0.04)', cursor: 'pointer', width: '100%', fontFamily: 'var(--ff-sans)' },
-  themeIcon: { fontSize: '0.9rem', flexShrink: 0 },
-  themeLabel: { fontSize: '0.78rem', color: 'rgba(247,243,238,0.5)', fontWeight: '500', flex: 1, textAlign: 'left' },
-  themeTrack: { width: '28px', height: '16px', borderRadius: '8px', background: 'rgba(247,243,238,0.15)', position: 'relative', flexShrink: 0, border: '1px solid rgba(247,243,238,0.1)' },
-  themeThumb: { position: 'absolute', top: '2px', left: '2px', width: '10px', height: '10px', borderRadius: '50%', background: 'var(--gold-light)', transition: 'transform 0.2s ease' },
-  userRow: { display: 'flex', alignItems: 'center', gap: '9px', padding: '9px 10px', borderRadius: '9px', background: 'rgba(247,243,238,0.05)' },
-  avatar: { width: '28px', height: '28px', borderRadius: '50%', background: 'var(--gold-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--ff-serif)', fontSize: '0.82rem', fontWeight: '700', color: 'var(--forest)', flexShrink: 0 },
-  userName: { fontSize: '0.8rem', fontWeight: '600', color: '#F7F3EE', lineHeight: 1.2 },
-  userPlan: { fontSize: '0.67rem', color: 'rgba(247,243,238,0.38)', marginTop: '2px' },
-  logoutBtn: { background: 'transparent', border: 'none', color: 'rgba(247,243,238,0.3)', cursor: 'pointer', fontSize: '1rem', padding: '4px', lineHeight: 1, flexShrink: 0 },
+  backdrop: { position: 'fixed', inset: 0, zIndex: 49, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', animation: 'fadeIn 0.2s ease' },
+  sidebar: { width: '220px', flexShrink: 0, background: 'rgba(13,11,20,0.85)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderRight: '1px solid rgba(255,255,255,0.07)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 50 },
+  sidebarMobile: { transform: 'translateX(-100%)', transition: 'transform 0.28s cubic-bezier(0.4,0,0.2,1)', boxShadow: 'none' },
+  sidebarOpen: { transform: 'translateX(0)', boxShadow: '8px 0 40px rgba(0,0,0,0.6)' },
+  logoWrap: { padding: '20px 16px 16px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid rgba(255,255,255,0.06)' },
+  logoMark: { width: '32px', height: '32px', borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', fontSize: '14px', color: '#fff', flexShrink: 0, transition: 'background 0.4s, box-shadow 0.4s' },
+  logoText: { fontSize: '1.15rem', fontWeight: '800', color: '#fff', fontStyle: 'normal', letterSpacing: '-0.03em', flex: 1 },
+  em: { fontStyle: 'italic', transition: 'color 0.4s' },
+  closeBtn: { background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.3)', cursor: 'pointer', fontSize: '1rem', padding: '4px', lineHeight: 1, flexShrink: 0 },
+  nav: { flex: 1, padding: '10px 10px 6px', display: 'flex', flexDirection: 'column', gap: '1px', overflowY: 'auto' },
+  navLabel: { fontSize: '0.6rem', fontWeight: '600', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', padding: '6px 10px 8px' },
+  navItem: { display: 'flex', alignItems: 'center', gap: '9px', padding: '9px 11px', borderRadius: '10px', border: 'none', background: 'transparent', color: 'rgba(255,255,255,0.4)', fontSize: '0.83rem', fontWeight: '500', cursor: 'pointer', textAlign: 'left', width: '100%', fontFamily: 'var(--ff)', transition: 'background 0.3s, color 0.3s' },
+  navIcon: { fontSize: '0.9rem', width: '18px', textAlign: 'center', flexShrink: 0 },
+  activeDot: { width: '5px', height: '5px', borderRadius: '50%', marginLeft: 'auto', flexShrink: 0, transition: 'background 0.4s' },
+  divider: { height: '1px', background: 'rgba(255,255,255,0.06)', margin: '8px 0' },
+  premBtn: { display: 'flex', alignItems: 'center', gap: '9px', padding: '9px 11px', borderRadius: '10px', border: '1px solid', background: 'rgba(245,158,11,0.08)', fontSize: '0.83rem', fontWeight: '600', cursor: 'pointer', textAlign: 'left', width: '100%', fontFamily: 'var(--ff)' },
+  footer: { padding: '10px', borderTop: '1px solid rgba(255,255,255,0.06)' },
+  userRow: { display: 'flex', alignItems: 'center', gap: '9px', padding: '9px 10px', borderRadius: '10px', background: 'rgba(255,255,255,0.04)' },
+  avatar: { width: '30px', height: '30px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '0.8rem', color: '#fff', flexShrink: 0, transition: 'background 0.4s' },
+  userName: { fontSize: '0.8rem', fontWeight: '600', color: '#fff', lineHeight: 1.2 },
+  userPlan: { fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: '2px' },
+  logoutBtn: { background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.25)', cursor: 'pointer', fontSize: '1rem', padding: '4px', lineHeight: 1, flexShrink: 0 },
 }

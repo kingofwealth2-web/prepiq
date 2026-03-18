@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
+import { gemini, parseJSON } from '../lib/gemini'
 
 // Inject flip CSS into the document head once
 const FLIP_STYLE = `
@@ -29,10 +30,10 @@ const FLIP_STYLE = `
 .fc-front {
   background: var(--surface);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-md);
+  box-shadow: none;
 }
 .fc-back {
-  background: var(--forest-mid);
+  background: var(--surface-solid);
   border: 1px solid rgba(200,136,10,0.2);
   transform: rotateY(180deg);
 }
@@ -81,52 +82,19 @@ export default function Flashcards() {
     setFinished(false)
 
     try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ role: 'user', parts: [{ text:
-              `Generate 15 flashcards for WASSCE ${subject.name}. Each flashcard should have a key term, definition, or concept that students must know.
+      const { text } = await gemini(
+        `Generate 15 flashcards for WASSCE ${subject.name}. Each flashcard should have a key term, definition, or concept that students must know.
 Return ONLY a valid JSON array. Each object must have:
 {"front":"the term, concept or question","back":"the definition, explanation or answer","topic":"the topic this belongs to"}
 Make them genuinely useful for WASSCE exam preparation. Cover different topics within ${subject.name}.`
-            }] }],
-          })
-        }
       )
 
-      const data = await response.json()
-
-      // Check for API-level errors (rate limit, quota, etc.)
-      if (data.error) {
-        const msg = data.error.message || 'API error'
-        if (data.error.code === 429 || msg.toLowerCase().includes('quota') || msg.toLowerCase().includes('rate')) {
-          setError('AI rate limit reached. Please wait a minute and try again.')
-        } else {
-          setError(`Could not generate flashcards: ${msg}`)
-        }
-        setGenerating(false)
-        return
-      }
-
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text
-      if (!text) {
-        setError('No response from AI. Please try again.')
-        setGenerating(false)
-        return
-      }
-
-      const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim()
-      const parsed = JSON.parse(cleaned)
-
+      const parsed = parseJSON(text)
       if (!Array.isArray(parsed) || parsed.length === 0) {
         setError('AI returned invalid data. Please try again.')
         setGenerating(false)
         return
       }
-
       setCards(parsed)
     } catch (err) {
       console.error('Flashcard generation error:', err)
@@ -246,7 +214,7 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
           <h2 style={s.finishedTitle}>Session complete!</h2>
           <div style={s.finishedStats}>
             <div style={s.finishedStat}>
-              <div style={{ ...s.finishedNum, color: 'var(--teal)' }}>{known.length}</div>
+              <div style={{ ...s.finishedNum, color: 'var(--green)' }}>{known.length}</div>
               <div style={s.finishedLabel}>I knew this</div>
             </div>
             <div style={s.finishedStat}>
@@ -297,7 +265,7 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
             </div>
             {/* Back */}
             <div className="fc-face fc-back">
-              <div style={{ ...s.cardSide, color: 'var(--gold-light)' }}>Definition</div>
+              <div style={{ ...s.cardSide, color: 'var(--accent-light)' }}>Definition</div>
               <div style={s.cardBack}>{card?.back}</div>
             </div>
           </div>
@@ -318,7 +286,7 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
           {cards.map((_, i) => (
             <div key={i} style={{
               ...s.dot,
-              background: i < current ? 'var(--teal)' : i === current ? 'var(--gold)' : 'var(--cream-dark)'
+              background: i < current ? 'var(--green)' : i === current ? 'var(--accent-primary)' : 'rgba(255,255,255,.04)'
             }} />
           ))}
         </div>
@@ -329,50 +297,50 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
 }
 
 const s = {
-  shell: { minHeight: '100vh', background: 'var(--surface-mid)', fontFamily: 'var(--ff-sans)', display: 'flex', flexDirection: 'column' },
-  header: { background: 'var(--surface)', borderBottom: '1px solid var(--border)' },
+  shell: { minHeight: '100vh', background: 'var(--bg)', fontFamily: 'var(--ff)', display: 'flex', flexDirection: 'column' },
+  header: { background: 'var(--surface-solid)', borderBottom: '1px solid var(--border)' },
   kente: { height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
   headerInner: { display: 'flex', alignItems: 'center', gap: '16px', padding: '14px 24px' },
-  backBtn: { background: 'transparent', border: 'none', color: 'var(--ink-muted)', cursor: 'pointer', fontSize: '0.86rem', fontFamily: 'var(--ff-sans)' },
-  headerTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)', flex: 1 },
-  headerCount: { fontSize: '0.86rem', fontWeight: '600', color: 'var(--gold)' },
-  progressBar: { height: '3px', background: 'var(--cream-mid)' },
-  progressFill: { height: '100%', background: 'var(--gold)', transition: 'width 0.4s ease' },
+  backBtn: { background: 'transparent', border: 'none', color: 'var(--ink-muted)', cursor: 'pointer', fontSize: '0.86rem', fontFamily: 'var(--ff)' },
+  headerTitle: { fontFamily: 'var(--ff)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)', flex: 1 },
+  headerCount: { fontSize: '0.86rem', fontWeight: '600', color: 'var(--accent-primary)' },
+  progressBar: { height: '3px', background: 'rgba(255,255,255,.06)' },
+  progressFill: { height: '100%', background: 'var(--accent-primary)', transition: 'width 0.4s ease' },
   content: { flex: 1, padding: '28px', maxWidth: '560px', margin: '0 auto', width: '100%' },
   centred: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '28px' },
-  pageTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.4rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '6px' },
+  pageTitle: { fontFamily: 'var(--ff)', fontSize: '1.4rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '6px' },
   pageSub: { fontSize: '0.86rem', color: 'var(--ink-muted)', marginBottom: '24px' },
   subjectGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '12px' },
-  subjectCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', cursor: 'pointer', textAlign: 'center', boxShadow: 'var(--shadow-sm)', transition: 'box-shadow 0.15s' },
+  subjectCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', cursor: 'pointer', textAlign: 'center', boxShadow: 'none', transition: 'box-shadow 0.15s' },
   subjectIcon: { fontSize: '2rem', marginBottom: '10px' },
-  subjectName: { fontFamily: 'var(--ff-serif)', fontSize: '0.92rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '4px' },
-  subjectSub: { fontSize: '0.73rem', color: 'var(--gold)', fontWeight: '600' },
-  generatingCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '48px', textAlign: 'center', maxWidth: '380px', position: 'relative', overflow: 'hidden', boxShadow: 'var(--shadow-md)' },
+  subjectName: { fontFamily: 'var(--ff)', fontSize: '0.92rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '4px' },
+  subjectSub: { fontSize: '0.73rem', color: 'var(--accent-primary)', fontWeight: '600' },
+  generatingCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '48px', textAlign: 'center', maxWidth: '380px', position: 'relative', overflow: 'hidden', boxShadow: 'none' },
   genDots: { display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px' },
-  genDot: { width: '10px', height: '10px', borderRadius: '50%', background: 'var(--gold)', animation: 'pulse 1s infinite' },
-  genTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.2rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '8px' },
+  genDot: { width: '10px', height: '10px', borderRadius: '50%', background: 'var(--accent-primary)', animation: 'pulse 1s infinite' },
+  genTitle: { fontFamily: 'var(--ff)', fontSize: '1.2rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '8px' },
   genSub: { fontSize: '0.84rem', color: 'var(--ink-muted)' },
-  errorCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '40px', textAlign: 'center', maxWidth: '400px', width: '100%', boxShadow: 'var(--shadow-md)' },
+  errorCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '40px', textAlign: 'center', maxWidth: '400px', width: '100%', boxShadow: 'none' },
   errorIcon: { fontSize: '2.5rem', marginBottom: '12px' },
-  errorTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '10px' },
+  errorTitle: { fontFamily: 'var(--ff)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '10px' },
   errorMsg: { fontSize: '0.86rem', color: 'var(--ink-muted)', marginBottom: '20px', lineHeight: 1.5 },
-  cardSide: { fontSize: '0.65rem', fontWeight: '700', letterSpacing: '0.14em', color: 'var(--gold)', marginBottom: '10px', textTransform: 'uppercase' },
-  cardTopic: { fontSize: '0.72rem', color: 'var(--ink-muted)', marginBottom: '14px', background: 'var(--surface-mid)', padding: '3px 10px', borderRadius: '20px' },
-  cardFront: { fontFamily: 'var(--ff-serif)', fontSize: '1.25rem', fontWeight: '700', color: 'var(--ink)', lineHeight: 1.4 },
+  cardSide: { fontSize: '0.65rem', fontWeight: '700', letterSpacing: '0.14em', color: 'var(--accent-primary)', marginBottom: '10px', textTransform: 'uppercase' },
+  cardTopic: { fontSize: '0.72rem', color: 'var(--ink-muted)', marginBottom: '14px', background: 'var(--bg)', padding: '3px 10px', borderRadius: '20px' },
+  cardFront: { fontFamily: 'var(--ff)', fontSize: '1.25rem', fontWeight: '700', color: 'var(--ink)', lineHeight: 1.4 },
   cardBack: { fontSize: '0.96rem', color: '#F7F3EE', lineHeight: 1.65 },
   tapHint: { position: 'absolute', bottom: '14px', fontSize: '0.7rem', color: 'var(--ink-faint)' },
   actions: { display: 'flex', gap: '10px', marginBottom: '22px' },
-  btnKnow: { flex: 1, padding: '13px', background: 'var(--teal-pale)', border: '1.5px solid rgba(0,158,115,0.25)', borderRadius: 'var(--r-md)', color: 'var(--teal)', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
-  btnDontKnow: { flex: 1, padding: '13px', background: 'var(--red-pale)', border: '1.5px solid rgba(200,16,46,0.2)', borderRadius: 'var(--r-md)', color: 'var(--red)', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  btnKnow: { flex: 1, padding: '13px', background: 'var(--green-soft)', border: '1.5px solid rgba(0,158,115,0.25)', borderRadius: 'var(--r-md)', color: 'var(--green)', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  btnDontKnow: { flex: 1, padding: '13px', background: 'var(--red-soft)', border: '1.5px solid rgba(200,16,46,0.2)', borderRadius: 'var(--r-md)', color: 'var(--red)', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
   dots: { display: 'flex', justifyContent: 'center', gap: '5px', flexWrap: 'wrap' },
   dot: { width: '7px', height: '7px', borderRadius: '50%', transition: 'background 0.3s' },
-  finishedCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '40px', textAlign: 'center', maxWidth: '420px', width: '100%', position: 'relative', overflow: 'hidden', boxShadow: 'var(--shadow-md)' },
-  finishedTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.4rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '24px' },
+  finishedCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '40px', textAlign: 'center', maxWidth: '420px', width: '100%', position: 'relative', overflow: 'hidden', boxShadow: 'none' },
+  finishedTitle: { fontFamily: 'var(--ff)', fontSize: '1.4rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '24px' },
   finishedStats: { display: 'flex', justifyContent: 'center', gap: '40px', marginBottom: '28px' },
   finishedStat: { textAlign: 'center' },
-  finishedNum: { fontFamily: 'var(--ff-serif)', fontSize: '2.5rem', fontWeight: '700', lineHeight: 1 },
+  finishedNum: { fontFamily: 'var(--ff)', fontSize: '2.5rem', fontWeight: '700', lineHeight: 1 },
   finishedLabel: { fontSize: '0.76rem', color: 'var(--ink-muted)', marginTop: '4px' },
   finishedActions: { display: 'flex', flexDirection: 'column', gap: '9px' },
-  btnPrimary: { width: '100%', padding: '12px', background: 'var(--forest-mid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
-  btnOutline: { width: '100%', padding: '12px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  btnPrimary: { width: '100%', padding: '12px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  btnOutline: { width: '100%', padding: '12px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
 }

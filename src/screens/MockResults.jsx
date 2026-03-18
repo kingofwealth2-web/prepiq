@@ -28,12 +28,12 @@ export default function MockResults() {
   }
 
   const getGrade = score => {
-    if (score >= 80) return { grade: 'A1', color: 'var(--teal)' }
-    if (score >= 75) return { grade: 'B2', color: 'var(--teal)' }
-    if (score >= 70) return { grade: 'B3', color: 'var(--gold)' }
-    if (score >= 65) return { grade: 'C4', color: 'var(--gold)' }
-    if (score >= 60) return { grade: 'C5', color: 'var(--gold)' }
-    if (score >= 55) return { grade: 'C6', color: 'var(--gold)' }
+    if (score >= 80) return { grade: 'A1', color: 'var(--green)' }
+    if (score >= 75) return { grade: 'B2', color: 'var(--green)' }
+    if (score >= 70) return { grade: 'B3', color: 'var(--accent-primary)' }
+    if (score >= 65) return { grade: 'C4', color: 'var(--accent-primary)' }
+    if (score >= 60) return { grade: 'C5', color: 'var(--accent-primary)' }
+    if (score >= 55) return { grade: 'C6', color: 'var(--accent-primary)' }
     if (score >= 50) return { grade: 'D7', color: 'var(--red)' }
     if (score >= 45) return { grade: 'E8', color: 'var(--red)' }
     return { grade: 'F9', color: 'var(--red)' }
@@ -58,8 +58,8 @@ export default function MockResults() {
           </div>
           <div style={s.scoreRing}>
             <svg width="130" height="130" viewBox="0 0 130 130" style={{ transform: 'rotate(-90deg)' }}>
-              <circle cx="65" cy="65" r="55" fill="none" stroke="var(--cream-dark)" strokeWidth="10" />
-              <circle cx="65" cy="65" r="55" fill="none" stroke="var(--gold)" strokeWidth="10"
+              <circle cx="65" cy="65" r="55" fill="none" stroke="rgba(255,255,255,.04)" strokeWidth="10" />
+              <circle cx="65" cy="65" r="55" fill="none" stroke="var(--accent-primary)" strokeWidth="10"
                 strokeLinecap="round" strokeDasharray="345" strokeDashoffset={dashOffset} />
             </svg>
             <div style={s.scoreNum}>{stats.score}%</div>
@@ -68,9 +68,9 @@ export default function MockResults() {
 
         <div style={s.statsRow}>
           {[
-            { num: stats.correct, label: 'Correct', color: 'var(--teal)' },
+            { num: stats.correct, label: 'Correct', color: 'var(--green)' },
             { num: stats.total - stats.correct, label: 'Wrong', color: 'var(--red)' },
-            { num: `${stats.score}%`, label: 'Score', color: 'var(--gold)' },
+            { num: `${stats.score}%`, label: 'Score', color: 'var(--accent-primary)' },
           ].map((st, i) => (
             <div key={i} style={s.statCard}>
               <div style={{ ...s.statNum, color: st.color }}>{st.num}</div>
@@ -83,7 +83,7 @@ export default function MockResults() {
           <h3 style={s.sectionTitle}>Performance by topic</h3>
           {Object.entries(stats.topicMap).map(([topic, data]) => {
             const pct = Math.round((data.correct / data.total) * 100)
-            const c = pct >= 70 ? 'var(--teal)' : pct >= 50 ? 'var(--gold)' : 'var(--red)'
+            const c = pct >= 70 ? 'var(--green)' : pct >= 50 ? 'var(--accent-primary)' : 'var(--red)'
             return (
               <div key={topic} style={s.topicRow}>
                 <div style={s.topicName}>{topic}</div>
@@ -105,30 +105,30 @@ export default function MockResults() {
 }
 
 const s = {
-  shell: { minHeight: '100vh', background: 'var(--surface-mid)', fontFamily: 'var(--ff-sans)' },
-  loadShell: { minHeight: '100vh', background: 'var(--surface-mid)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  spinner: { width: '32px', height: '32px', border: '3px solid var(--border-mid)', borderTopColor: 'var(--gold)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
+  shell: { minHeight: '100vh', background: 'var(--bg)', fontFamily: 'var(--ff)' },
+  loadShell: { minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  spinner: { width: '32px', height: '32px', border: '3px solid var(--border-mid)', borderTopColor: 'var(--accent-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
   kente: { height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
   content: { maxWidth: '680px', margin: '0 auto', padding: '32px 24px' },
-  hero: { background: 'var(--forest)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 'var(--r-xl)', padding: '32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', gap: '24px', flexWrap: 'wrap' },
+  hero: { background: 'var(--surface-solid)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 'var(--r-xl)', padding: '32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', gap: '24px', flexWrap: 'wrap' },
   heroLeft: {},
   heroLabel: { fontSize: '0.68rem', fontWeight: '600', letterSpacing: '0.12em', color: 'rgba(247,243,238,0.45)', textTransform: 'uppercase', marginBottom: '8px' },
-  heroGrade: { fontFamily: 'var(--ff-serif)', fontSize: '3.5rem', fontWeight: '700', lineHeight: 1, marginBottom: '8px' },
+  heroGrade: { fontFamily: 'var(--ff)', fontSize: '3.5rem', fontWeight: '700', lineHeight: 1, marginBottom: '8px' },
   heroSub: { fontSize: '0.84rem', color: 'rgba(247,243,238,0.5)' },
   scoreRing: { position: 'relative', width: '130px', height: '130px', flexShrink: 0 },
-  scoreNum: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontFamily: 'var(--ff-serif)', fontSize: '1.8rem', fontWeight: '700', color: 'var(--gold-light)' },
+  scoreNum: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontFamily: 'var(--ff)', fontSize: '1.8rem', fontWeight: '700', color: 'var(--accent-light)' },
   statsRow: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '16px' },
-  statCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '16px', textAlign: 'center', boxShadow: 'var(--shadow-sm)' },
-  statNum: { fontFamily: 'var(--ff-serif)', fontSize: '2rem', fontWeight: '700', lineHeight: 1, marginBottom: '4px' },
+  statCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '16px', textAlign: 'center', boxShadow: 'none' },
+  statNum: { fontFamily: 'var(--ff)', fontSize: '2rem', fontWeight: '700', lineHeight: 1, marginBottom: '4px' },
   statLabel: { fontSize: '0.72rem', color: 'var(--ink-muted)', fontWeight: '500' },
-  section: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', marginBottom: '18px', boxShadow: 'var(--shadow-sm)' },
-  sectionTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '16px' },
+  section: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', marginBottom: '18px', boxShadow: 'none' },
+  sectionTitle: { fontFamily: 'var(--ff)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '16px' },
   topicRow: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' },
   topicName: { fontSize: '0.84rem', color: 'var(--ink)', width: '140px', flexShrink: 0 },
-  topicBar: { flex: 1, height: '6px', background: 'var(--cream-mid)', borderRadius: '3px', overflow: 'hidden' },
+  topicBar: { flex: 1, height: '6px', background: 'rgba(255,255,255,.06)', borderRadius: '3px', overflow: 'hidden' },
   topicFill: { height: '100%', borderRadius: '3px', transition: 'width 1s ease' },
   topicPct: { fontSize: '0.8rem', fontWeight: '600', width: '38px', textAlign: 'right', flexShrink: 0 },
   actions: { display: 'flex', gap: '10px' },
-  btnPrimary: { flex: 1, padding: '13px', background: 'var(--forest)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
-  btnOutline: { flex: 1, padding: '13px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  btnPrimary: { flex: 1, padding: '13px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  btnOutline: { flex: 1, padding: '13px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
 }

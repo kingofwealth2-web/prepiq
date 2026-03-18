@@ -80,8 +80,8 @@ export default function ExamReview() {
               {weakTopics.map(t => (
                 <div key={t.name} style={s.weakItem}>
                   <div style={s.weakName}>{t.name}</div>
-                  <div style={s.weakBar}><div style={{ ...s.weakFill, width: `${t.score}%`, background: t.score < 50 ? 'var(--red)' : 'var(--gold)' }} /></div>
-                  <div style={{ ...s.weakPct, color: t.score < 50 ? 'var(--red)' : 'var(--gold)' }}>{t.score}%</div>
+                  <div style={s.weakBar}><div style={{ ...s.weakFill, width: `${t.score}%`, background: t.score < 50 ? 'var(--red)' : 'var(--accent-primary)' }} /></div>
+                  <div style={{ ...s.weakPct, color: t.score < 50 ? 'var(--red)' : 'var(--accent-primary)' }}>{t.score}%</div>
                 </div>
               ))}
             </div>
@@ -99,9 +99,9 @@ export default function ExamReview() {
 
         <div style={s.qList}>
           {filtered.map(r => (
-            <div key={r.id} style={{ ...s.qCard, borderLeftColor: r.is_correct ? 'var(--teal)' : 'var(--red)' }}>
+            <div key={r.id} style={{ ...s.qCard, borderLeftColor: r.is_correct ? 'var(--green)' : 'var(--red)' }}>
               <div style={s.qHeader}>
-                <div style={{ ...s.qStatus, background: r.is_correct ? 'var(--teal-pale)' : 'var(--red-pale)', color: r.is_correct ? 'var(--teal)' : 'var(--red)' }}>
+                <div style={{ ...s.qStatus, background: r.is_correct ? 'var(--green-soft)' : 'var(--red-soft)', color: r.is_correct ? 'var(--green)' : 'var(--red)' }}>
                   {r.is_correct ? '✓ Correct' : '✗ Wrong'}
                 </div>
                 <div style={s.qMeta}>
@@ -115,7 +115,7 @@ export default function ExamReview() {
                   <div key={opt.id} style={{ ...s.opt, ...(opt.is_correct ? s.optCorrect : {}), ...(r.selected_option_id === opt.id && !opt.is_correct ? s.optWrong : {}) }}>
                     <div style={{ ...s.optLetter, ...(opt.is_correct ? s.optLetterCorrect : {}), ...(r.selected_option_id === opt.id && !opt.is_correct ? s.optLetterWrong : {}) }}>{opt.label}</div>
                     <div style={s.optText}><MathText text={opt.body} /></div>
-                    {opt.is_correct && <div style={{ color: 'var(--teal)', fontWeight: '700' }}>✓</div>}
+                    {opt.is_correct && <div style={{ color: 'var(--green)', fontWeight: '700' }}>✓</div>}
                     {r.selected_option_id === opt.id && !opt.is_correct && <div style={{ color: 'var(--red)', fontWeight: '700' }}>✗</div>}
                   </div>
                 ))}
@@ -127,7 +127,7 @@ export default function ExamReview() {
                 <div style={s.explainBox}>
                   {loadingExplain[r.question_id] ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      {[0,0.2,0.4].map((d,i) => <div key={i} style={{ width:'7px', height:'7px', borderRadius:'50%', background:'var(--gold)', animation:'pulse 1s infinite', animationDelay:`${d}s` }} />)}
+                      {[0,0.2,0.4].map((d,i) => <div key={i} style={{ width:'7px', height:'7px', borderRadius:'50%', background:'var(--accent-primary)', animation:'pulse 1s infinite', animationDelay:`${d}s` }} />)}
                       <span style={{ fontSize: '0.8rem', color: 'var(--ink-muted)', marginLeft: '4px' }}>Generating...</span>
                     </div>
                   ) : (
@@ -161,47 +161,47 @@ export default function ExamReview() {
 }
 
 const s = {
-  shell: { minHeight: '100vh', background: 'var(--surface-mid)', fontFamily: 'var(--ff-sans)' },
-  loadShell: { minHeight: '100vh', background: 'var(--surface-mid)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  spinner: { width: '32px', height: '32px', border: '3px solid var(--border-mid)', borderTopColor: 'var(--gold)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
+  shell: { minHeight: '100vh', background: 'var(--bg)', fontFamily: 'var(--ff)' },
+  loadShell: { minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  spinner: { width: '32px', height: '32px', border: '3px solid var(--border-mid)', borderTopColor: 'var(--accent-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
   kente: { height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
-  header: { display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 24px', background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
-  backBtn: { background: 'transparent', border: 'none', color: 'var(--ink-muted)', cursor: 'pointer', fontSize: '0.86rem', fontFamily: 'var(--ff-sans)' },
-  headerTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)', flex: 1 },
-  headerScore: { fontSize: '0.86rem', fontWeight: '600', color: 'var(--gold)' },
+  header: { display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 24px', background: 'var(--surface-solid)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
+  backBtn: { background: 'transparent', border: 'none', color: 'var(--ink-muted)', cursor: 'pointer', fontSize: '0.86rem', fontFamily: 'var(--ff)' },
+  headerTitle: { fontFamily: 'var(--ff)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)', flex: 1 },
+  headerScore: { fontSize: '0.86rem', fontWeight: '600', color: 'var(--accent-primary)' },
   content: { maxWidth: '760px', margin: '0 auto', padding: '24px' },
-  weakCard: { background: 'var(--forest)', borderRadius: 'var(--r-lg)', padding: '24px', marginBottom: '18px', position: 'relative', overflow: 'hidden' },
+  weakCard: { background: 'var(--surface-solid)', borderRadius: 'var(--r-lg)', padding: '24px', marginBottom: '18px', position: 'relative', overflow: 'hidden' },
   weakKente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
-  weakTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: '#F7F3EE', marginBottom: '16px' },
+  weakTitle: { fontFamily: 'var(--ff)', fontSize: '1rem', fontWeight: '700', color: '#F7F3EE', marginBottom: '16px' },
   weakList: { display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' },
   weakItem: { display: 'flex', alignItems: 'center', gap: '12px' },
   weakName: { fontSize: '0.84rem', color: '#F7F3EE', width: '140px', flexShrink: 0 },
   weakBar: { flex: 1, height: '5px', background: 'rgba(247,243,238,0.12)', borderRadius: '3px', overflow: 'hidden' },
   weakFill: { height: '100%', borderRadius: '3px', transition: 'width 1s ease' },
   weakPct: { fontSize: '0.8rem', fontWeight: '600', width: '36px', textAlign: 'right' },
-  btnPrimary: { width: '100%', padding: '12px', background: 'var(--gold)', border: 'none', borderRadius: 'var(--r-sm)', color: 'var(--forest)', fontWeight: '700', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  btnPrimary: { width: '100%', padding: '12px', background: 'var(--accent-primary)', border: 'none', borderRadius: 'var(--r-sm)', color: 'var(--surface-solid)', fontWeight: '700', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
   filterRow: { display: 'flex', gap: '7px', marginBottom: '18px' },
-  filterBtn: { padding: '7px 15px', background: 'var(--surface)', border: '1.5px solid var(--border-mid)', borderRadius: '20px', color: 'var(--ink-muted)', fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
-  filterBtnActive: { borderColor: 'var(--gold)', color: 'var(--gold)', background: 'var(--gold-pale)' },
+  filterBtn: { padding: '7px 15px', background: 'var(--surface-solid)', border: '1.5px solid var(--border-mid)', borderRadius: '20px', color: 'var(--ink-muted)', fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  filterBtnActive: { borderColor: 'var(--accent-primary)', color: 'var(--accent-primary)', background: 'var(--accent-soft)' },
   qList: { display: 'flex', flexDirection: 'column', gap: '14px' },
-  qCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderLeft: '3px solid', borderRadius: 'var(--r-lg)', padding: '20px', boxShadow: 'var(--shadow-sm)' },
+  qCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderLeft: '3px solid', borderRadius: 'var(--r-lg)', padding: '20px', boxShadow: 'none' },
   qHeader: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px', flexWrap: 'wrap' },
   qStatus: { padding: '4px 10px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '600' },
   qMeta: { display: 'flex', gap: '6px', flex: 1, flexWrap: 'wrap' },
-  badgeGold: { background: 'var(--gold-pale)', color: 'var(--gold)', border: '1px solid var(--gold-border)', padding: '2px 8px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: '600' },
-  badgeMuted: { background: 'var(--cream-mid)', color: 'var(--ink-muted)', padding: '2px 8px', borderRadius: '20px', fontSize: '0.7rem' },
+  badgeGold: { background: 'var(--accent-soft)', color: 'var(--accent-primary)', border: '1px solid var(--accent-border)', padding: '2px 8px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: '600' },
+  badgeMuted: { background: 'rgba(255,255,255,.06)', color: 'var(--ink-muted)', padding: '2px 8px', borderRadius: '20px', fontSize: '0.7rem' },
   qBody: { fontSize: '0.98rem', lineHeight: '1.65', color: 'var(--ink)', marginBottom: '14px' },
   optList: { display: 'flex', flexDirection: 'column', gap: '7px', marginBottom: '12px' },
-  opt: { display: 'flex', alignItems: 'center', gap: '12px', padding: '11px 14px', border: '1.5px solid var(--border)', borderRadius: 'var(--r-sm)', background: 'var(--surface-mid)' },
-  optCorrect: { borderColor: 'var(--teal)', background: 'var(--teal-pale)' },
-  optWrong: { borderColor: 'var(--red)', background: 'var(--red-pale)' },
+  opt: { display: 'flex', alignItems: 'center', gap: '12px', padding: '11px 14px', border: '1.5px solid var(--border)', borderRadius: 'var(--r-sm)', background: 'var(--bg)' },
+  optCorrect: { borderColor: 'var(--green)', background: 'var(--green-soft)' },
+  optWrong: { borderColor: 'var(--red)', background: 'var(--red-soft)' },
   optLetter: { width: '28px', height: '28px', borderRadius: '50%', border: '1.5px solid var(--border-mid)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.76rem', fontWeight: '700', color: 'var(--ink-muted)', flexShrink: 0 },
-  optLetterCorrect: { background: 'var(--teal)', borderColor: 'var(--teal)', color: 'var(--surface)' },
-  optLetterWrong: { background: 'var(--red)', borderColor: 'var(--red)', color: 'var(--surface)' },
+  optLetterCorrect: { background: 'var(--green)', borderColor: 'var(--green)', color: 'var(--surface-solid)' },
+  optLetterWrong: { background: 'var(--red)', borderColor: 'var(--red)', color: 'var(--surface-solid)' },
   optText: { fontSize: '0.86rem', color: 'var(--ink)', flex: 1 },
-  explainBtn: { width: '100%', padding: '10px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink-muted)', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)', marginTop: '4px' },
-  explainBox: { background: 'var(--surface-mid)', borderRadius: 'var(--r-sm)', padding: '16px', marginTop: '12px', border: '1px solid var(--border)' },
-  bottomBar: { position: 'sticky', bottom: 0, background: 'var(--surface)', borderTop: '1px solid var(--border)', padding: '12px 0', display: 'flex', gap: '10px', marginTop: '24px' },
-  bottomBtnOutline: { flex: 1, padding: '11px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.84rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
-  bottomBtnPrimary: { flex: 1, padding: '11px', background: 'var(--forest-mid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.84rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  explainBtn: { width: '100%', padding: '10px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink-muted)', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'var(--ff)', marginTop: '4px' },
+  explainBox: { background: 'var(--bg)', borderRadius: 'var(--r-sm)', padding: '16px', marginTop: '12px', border: '1px solid var(--border)' },
+  bottomBar: { position: 'sticky', bottom: 0, background: 'var(--surface-solid)', borderTop: '1px solid var(--border)', padding: '12px 0', display: 'flex', gap: '10px', marginTop: '24px' },
+  bottomBtnOutline: { flex: 1, padding: '11px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.84rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  bottomBtnPrimary: { flex: 1, padding: '11px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.84rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
 }
