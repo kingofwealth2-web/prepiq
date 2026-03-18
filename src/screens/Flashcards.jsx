@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 import { gemini, parseJSON } from '../lib/gemini'
+import { supabase } from '../lib/supabase'
+import PremiumGate from '../components/PremiumGate'
 
 // Inject flip CSS into the document head once
 const FLIP_STYLE = `
@@ -58,6 +60,12 @@ export default function Flashcards() {
   const [known, setKnown] = useState([])
   const [unknown, setUnknown] = useState([])
   const [finished, setFinished] = useState(false)
+  const [user, setUser] = useState(null)
+  const [usedSubjects, setUsedSubjects] = useState([])
+
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data: { user: u } }) => { if (u) { const { data: profile } = await supabase.from('users').select('plan').eq('id', u.id).single(); setUser({ ...u, plan: profile?.plan }) } })
+  }, [])
 
   useEffect(() => {
     supabase.from('subjects').select('*').order('name').then(({ data }) => {
@@ -71,6 +79,15 @@ export default function Flashcards() {
   }, [])
 
   async function generateCards(subject) {
+    // Free users limited to 3 subjects per session
+    if (user?.plan !== 'premium' && !usedSubjects.includes(subject.id) && usedSubjects.length >= 3) {
+      setSelectedSubject(subject)
+      setGenerating(false)
+      return
+    }
+    if (!usedSubjects.includes(subject.id)) {
+      setUsedSubjects(prev => [...prev, subject.id])
+    }
     setSelectedSubject(subject)
     setGenerating(true)
     setCards([])
@@ -148,6 +165,17 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
             </div>
           ))}
         </div>
+
+        {user?.plan !== 'premium' && usedSubjects.length >= 3 && (
+          <div style={{ marginTop: '16px' }}>
+            <PremiumGate feature="Unlimited flashcard subjects" />
+          </div>
+        )}
+        {user?.plan !== 'premium' && (
+          <div style={{ marginTop: '12px', fontSize: '.76rem', color: 'var(--ink-faint)', textAlign: 'center' }}>
+            Free plan: {Math.max(0, 3 - usedSubjects.length)} subject{3 - usedSubjects.length !== 1 ? 's' : ''} remaining this session
+          </div>
+        )}
       </div>
     </div>
   )

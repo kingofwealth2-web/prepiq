@@ -6,6 +6,7 @@ import MobileHeader from '../components/MobileHeader'
 import { useMobileMenu } from '../App'
 import MathText from '../components/MathText'
 import { gemini, parseJSON } from '../lib/gemini'
+import PremiumGate from '../components/PremiumGate'
 
 export default function Practice() {
   const navigate = useNavigate()
@@ -60,19 +61,20 @@ export default function Practice() {
     setGeneratingAI(true); setAiQuestions([])
     try {
       const { text } = await gemini(
-        `You are a WASSCE examiner creating verified multiple choice questions for ${aiSubject.name} on the topic "${aiTopic}".
+        `You are a WASSCE examiner. Generate 5 multiple choice questions for ${aiSubject.name} on "${aiTopic}".
 
-For each question you MUST:
-1. Write the question clearly
-2. Write 4 plausible options (A, B, C, D)
-3. Work out the correct answer step by step in your head
-4. Double-check your answer is definitely correct before marking it
-5. Only mark an answer as correct if you are 100% certain
+CRITICAL INSTRUCTIONS — follow exactly:
+1. For EVERY question, write out the full solution working FIRST in your reasoning
+2. Only THEN assign the correct answer letter based on your working
+3. Never assign a correct answer before solving — this causes errors
+4. For maths: show every calculation step. Verify arithmetic twice.
+5. For each wrong option: make it plausible but clearly different from the correct answer
+6. If you are uncertain about any answer, skip that question and write a different one
 
-Return ONLY a valid JSON array of 5 questions. Each object must have exactly:
-{"body":"the question","option_a":"option text","option_b":"option text","option_c":"option text","option_d":"option text","correct":"A or B or C or D","explanation":"step-by-step working showing why the correct answer is right"}
+Return ONLY a valid JSON array. Each object must have:
+{"body":"question text","option_a":"...","option_b":"...","option_c":"...","option_d":"...","correct":"A or B or C or D","explanation":"full step-by-step working — show ALL calculations, explain why each wrong option is wrong"}
 
-Do not guess. If you are not sure of the answer, choose a different question topic where you are certain.`
+No markdown, no preamble, just the JSON array.`
       )
       const parsed = parseJSON(text)
       setAiQuestions(parsed.map((q, i) => ({
@@ -109,8 +111,9 @@ Do not guess. If you are not sure of the answer, choose a different question top
             <button style={{ ...s.modeBtn, ...(mode === 'past' ? s.modeBtnActive : {}) }} onClick={() => setMode('past')}>
               📚 Past questions
             </button>
-            <button style={{ ...s.modeBtn, ...(mode === 'ai' ? s.modeBtnActive : {}) }} onClick={() => setMode('ai')}>
-              ✨ AI-generated
+            <button style={{ ...s.modeBtn, ...(mode === 'ai' ? s.modeBtnActive : {}) }}
+              onClick={() => setMode('ai')}>
+              ✨ AI-generated {user?.plan !== 'premium' && <span style={{ fontSize: '.62rem', background: 'var(--accent-soft)', color: 'var(--accent-light)', border: '1px solid var(--accent-border)', padding: '1px 6px', borderRadius: '10px', marginLeft: '4px' }}>Premium</span>}
             </button>
           </div>
 
@@ -144,14 +147,18 @@ Do not guess. If you are not sure of the answer, choose a different question top
           )}
 
           {/* AI mode */}
-          {mode === 'ai' && (
+          {mode === 'ai' && user?.plan !== 'premium' && (
+            <PremiumGate feature="AI-generated questions" />
+          )}
+
+          {mode === 'ai' && user?.plan === 'premium' && (
             <div style={s.aiPanel}>
               <div style={s.aiPanelHeader}>
                 <div style={s.kente} />
                 <h3 style={s.aiPanelTitle}>Generate questions on any topic</h3>
                 <p style={s.aiPanelSub}>Get 5 fresh WASSCE-style questions instantly</p>
                 <div style={s.aiDisclaimer}>
-                  ⚠️ AI-generated questions are not from official WAEC papers. Always verify answers with your textbook or teacher.
+                  ⚠️ AI questions are not from official WAEC papers and may occasionally contain errors — especially in maths. Always verify with your textbook or teacher before trusting an answer.
                 </div>
               </div>
               <div style={s.aiControls}>

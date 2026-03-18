@@ -276,9 +276,33 @@ Your role:
 - If asked about topics not related to studying, gently redirect to their exam preparation`
   }
 
+  function getMessageCount() {
+    const key = `nova-msgs-${new Date().toDateString()}`
+    return parseInt(localStorage.getItem(key) || '0')
+  }
+  function incrementMessageCount() {
+    const key = `nova-msgs-${new Date().toDateString()}`
+    localStorage.setItem(key, getMessageCount() + 1)
+  }
+
+  const FREE_LIMIT = 5
+  const isPremium = userCtx?.profile?.plan === 'premium'
+
   async function sendMessage(text) {
     const msg = text || input.trim()
     if (!msg) return
+
+    // Check free tier limit
+    if (!isPremium && getMessageCount() >= FREE_LIMIT) {
+      setMessages(prev => [...prev, {
+        role: 'nova',
+        content: `You've used your ${FREE_LIMIT} free messages today. Upgrade to Premium for unlimited Nova AI access. 💎`
+      }])
+      setExpression('sad')
+      return
+    }
+
+    incrementMessageCount()
     setInput('')
     setThinking(true)
     setExpression('thinking')

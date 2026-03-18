@@ -19,6 +19,7 @@ import Flashcards from './screens/Flashcards'
 import QuizGame from './screens/QuizGame'
 import Predictions from './screens/Predictions'
 import Profile from './screens/Profile'
+import Premium from './screens/Premium'
 import Nova from './components/Nova'
 
 export const MobileMenuContext = createContext({ open: false, setOpen: () => {} })
