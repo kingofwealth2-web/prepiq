@@ -266,7 +266,7 @@ export default function StudyPlan() {
               <div style={{ fontSize: '2rem', flexShrink: 0 }}>🎉</div>
               <div>
                 <div style={s.doneTitle}>All done for today!</div>
-                <div style={s.doneSub}>Amazing work. Come back tomorrow to keep your streak going.</div>
+                <div style={s.doneSub}>Novazing work. Come back tomorrow to keep your streak going.</div>
               </div>
             </div>
           )}

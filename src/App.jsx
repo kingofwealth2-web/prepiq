@@ -18,7 +18,7 @@ import Flashcards from './screens/Flashcards'
 import QuizGame from './screens/QuizGame'
 import Predictions from './screens/Predictions'
 import Profile from './screens/Profile'
-import Ama from './components/Ama'
+import Nova from './components/Nova'
 
 export const MobileMenuContext = createContext({ open: false, setOpen: () => {} })
 export const useMobileMenu = () => useContext(MobileMenuContext)
@@ -43,7 +43,7 @@ function AppRoutes() {
   return (
     <MobileMenuContext.Provider value={{ open: mobileMenuOpen, setOpen: setMobileMenuOpen }}>
       <BrowserRouter>
-        {session && <Ama />}
+        {session && <Nova />}
         <Routes>
           <Route path="/"                element={<Navigate to={session ? '/dashboard' : '/signup'} />} />
           <Route path="/signup"          element={!session ? <SignUp />       : <Navigate to="/dashboard" />} />
