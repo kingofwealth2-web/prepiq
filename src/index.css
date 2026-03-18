@@ -124,3 +124,11 @@ button, a, [role="button"] {
   height: 3px;
   background: repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px);
 }
+
+/* Sidebar width CSS variable — 0 on mobile so main content fills full width */
+:root { --sidebar-w: 220px; }
+@media (max-width: 768px) {
+  :root { --sidebar-w: 0px; }
+  /* Add bottom padding so content isn't hidden behind the bottom nav */
+  .has-bottom-nav { padding-bottom: 80px !important; }
+}

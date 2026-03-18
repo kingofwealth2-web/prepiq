@@ -27,11 +27,28 @@ export default function Question() {
     } else {
       query = query.eq('id', id)
     }
-    const { data } = await query
+    const { data, error } = await query
+
+    // If offline, try to serve from cache
+    if (error || !data) {
+      const cached = localStorage.getItem('prepiq-last-question')
+      if (cached) {
+        try {
+          const q = JSON.parse(cached)
+          setQuestion(q)
+          setOptions((q.answer_options || []).sort((a, b) => a.label.localeCompare(b.label)))
+        } catch { /* ignore */ }
+      }
+      setLoading(false)
+      return
+    }
+
     if (data && data.length > 0) {
       const q = data[0]
       setQuestion(q)
       setOptions(q.answer_options.sort((a, b) => a.label.localeCompare(b.label)))
+      // Cache for offline use
+      try { localStorage.setItem('prepiq-last-question', JSON.stringify(q)) } catch { /* ignore */ }
     }
     setLoading(false)
   }
@@ -41,7 +58,23 @@ export default function Question() {
     setSubmitted(true)
     const { data: { user } } = await supabase.auth.getUser()
     const today = new Date().toISOString().split('T')[0]
-    await supabase.from('streaks').upsert({ user_id: user.id, last_active_date: today, current_streak: 1 }, { onConflict: 'user_id' })
+
+    // Update streak
+    await supabase.from('streaks').upsert({
+      user_id: user.id, last_active_date: today, current_streak: 1,
+    }, { onConflict: 'user_id' })
+
+    // Track solo practice attempt (exam_id null = not part of a mock)
+    try {
+      await supabase.from('mock_responses').insert({
+        user_id: user.id,
+        exam_id: null,
+        question_id: question.id,
+        selected_option_id: selected.id,
+        is_correct: selected.is_correct,
+        time_spent_secs: 0,
+      })
+    } catch { /* non-critical */ }
   }
 
   async function handleExplain() {

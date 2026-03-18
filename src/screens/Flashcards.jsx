@@ -2,6 +2,49 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 
+// Inject flip CSS into the document head once
+const FLIP_STYLE = `
+.fc-scene { perspective: 1200px; cursor: pointer; }
+.fc-card {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fc-card.flipped { transform: rotateY(180deg); }
+.fc-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.fc-front {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+}
+.fc-back {
+  background: var(--forest-mid);
+  border: 1px solid rgba(200,136,10,0.2);
+  transform: rotateY(180deg);
+}
+`
+
+if (typeof document !== 'undefined' && !document.getElementById('fc-styles')) {
+  const el = document.createElement('style')
+  el.id = 'fc-styles'
+  el.textContent = FLIP_STYLE
+  document.head.appendChild(el)
+}
+
 export default function Flashcards() {
   const navigate = useNavigate()
   const [subjects, setSubjects] = useState([])
@@ -10,22 +53,39 @@ export default function Flashcards() {
   const [current, setCurrent] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [generating, setGenerating] = useState(false)
+  const [error, setError] = useState('')
   const [known, setKnown] = useState([])
   const [unknown, setUnknown] = useState([])
   const [finished, setFinished] = useState(false)
 
   useEffect(() => {
-    supabase.from('subjects').select('*').order('name').then(({ data }) => { const seen = new Set(); setSubjects((data || []).filter(s => { if (seen.has(s.name)) return false; seen.add(s.name); return true; })) })
+    supabase.from('subjects').select('*').order('name').then(({ data }) => {
+      const seen = new Set()
+      setSubjects((data || []).filter(s => {
+        if (seen.has(s.name)) return false
+        seen.add(s.name)
+        return true
+      }))
+    })
   }, [])
 
   async function generateCards(subject) {
-    setSelectedSubject(subject); setGenerating(true); setCards([])
-    setCurrent(0); setFlipped(false); setKnown([]); setUnknown([]); setFinished(false)
+    setSelectedSubject(subject)
+    setGenerating(true)
+    setCards([])
+    setError('')
+    setCurrent(0)
+    setFlipped(false)
+    setKnown([])
+    setUnknown([])
+    setFinished(false)
+
     try {
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
         {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ role: 'user', parts: [{ text:
               `Generate 15 flashcards for WASSCE ${subject.name}. Each flashcard should have a key term, definition, or concept that students must know.
@@ -36,11 +96,47 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
           })
         }
       )
+
       const data = await response.json()
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]'
-      const parsed = JSON.parse(text.replace(/```json/g, '').replace(/```/g, '').trim())
+
+      // Check for API-level errors (rate limit, quota, etc.)
+      if (data.error) {
+        const msg = data.error.message || 'API error'
+        if (data.error.code === 429 || msg.toLowerCase().includes('quota') || msg.toLowerCase().includes('rate')) {
+          setError('AI rate limit reached. Please wait a minute and try again.')
+        } else {
+          setError(`Could not generate flashcards: ${msg}`)
+        }
+        setGenerating(false)
+        return
+      }
+
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text
+      if (!text) {
+        setError('No response from AI. Please try again.')
+        setGenerating(false)
+        return
+      }
+
+      const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim()
+      const parsed = JSON.parse(cleaned)
+
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        setError('AI returned invalid data. Please try again.')
+        setGenerating(false)
+        return
+      }
+
       setCards(parsed)
-    } catch (err) { console.error('Error generating flashcards:', err) }
+    } catch (err) {
+      console.error('Flashcard generation error:', err)
+      if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')) {
+        setError('Network error. Check your connection and try again.')
+      } else {
+        setError('Something went wrong generating flashcards. Please try again.')
+      }
+    }
+
     setGenerating(false)
   }
 
@@ -62,6 +158,7 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
     return '📚'
   }
 
+  // Subject picker
   if (!selectedSubject) return (
     <div style={s.shell}>
       <div style={s.header}>
@@ -73,7 +170,7 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
       </div>
       <div style={s.content}>
         <h2 style={s.pageTitle}>Choose a subject</h2>
-        <p style={s.pageSub}>AI will generate flashcards for key terms and concepts.</p>
+        <p style={s.pageSub}>AI will generate 15 flashcards for key terms and concepts.</p>
         <div style={s.subjectGrid}>
           {subjects.map(sub => (
             <div key={sub.id} style={s.subjectCard} onClick={() => generateCards(sub)}>
@@ -87,6 +184,7 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
     </div>
   )
 
+  // Generating state
   if (generating) return (
     <div style={s.shell}>
       <div style={s.header}>
@@ -109,6 +207,29 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
     </div>
   )
 
+  // Error state
+  if (error) return (
+    <div style={s.shell}>
+      <div style={s.header}>
+        <div style={s.kente} />
+        <div style={s.headerInner}>
+          <button style={s.backBtn} onClick={() => setSelectedSubject(null)}>← Back</button>
+          <div style={s.headerTitle}>Flashcards — {selectedSubject.name}</div>
+        </div>
+      </div>
+      <div style={s.centred}>
+        <div style={s.errorCard}>
+          <div style={s.errorIcon}>⚠️</div>
+          <h3 style={s.errorTitle}>Could not generate flashcards</h3>
+          <p style={s.errorMsg}>{error}</p>
+          <button style={s.btnPrimary} onClick={() => generateCards(selectedSubject)}>Try again</button>
+          <button style={{ ...s.btnOutline, marginTop: '8px' }} onClick={() => setSelectedSubject(null)}>Choose another subject</button>
+        </div>
+      </div>
+    </div>
+  )
+
+  // Finished state
   if (finished) return (
     <div style={s.shell}>
       <div style={s.header}>
@@ -135,7 +256,9 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
           </div>
           <div style={s.finishedActions}>
             <button style={s.btnPrimary} onClick={restart}>Restart all cards</button>
-            {unknown.length > 0 && <button style={s.btnOutline} onClick={restartWeak}>Review {unknown.length} weak cards</button>}
+            {unknown.length > 0 && (
+              <button style={s.btnOutline} onClick={restartWeak}>Review {unknown.length} weak cards</button>
+            )}
             <button style={s.btnOutline} onClick={() => setSelectedSubject(null)}>Choose another subject</button>
           </div>
         </div>
@@ -156,30 +279,34 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
           <div style={s.headerCount}>{current + 1} / {cards.length}</div>
         </div>
       </div>
-      <div style={s.progressBar}><div style={{ ...s.progressFill, width: `${progress}%` }} /></div>
+      <div style={s.progressBar}>
+        <div style={{ ...s.progressFill, width: `${progress}%` }} />
+      </div>
 
       <div style={s.content}>
-        <div style={s.cardWrap} onClick={() => setFlipped(f => !f)}>
-          <div style={{ ...s.flashCard, ...(flipped ? s.flashCardFlipped : {}) }}>
-            <div style={s.flashCardInner}>
-              <div style={s.flashCardFront}>
-                <div style={s.cardSide}>Term</div>
-                <div style={s.cardTopic}>{card?.topic}</div>
-                <div style={s.cardFront}>{card?.front}</div>
-                <div style={s.tapHint}>Tap to reveal answer</div>
-              </div>
-              <div style={s.flashCardBack}>
-                <div style={s.cardSide}>Definition</div>
-                <div style={s.cardBack}>{card?.back}</div>
-              </div>
+
+        {/* Card flip — uses CSS classes for reliable backface-visibility */}
+        <div className="fc-scene" style={{ marginBottom: '22px' }} onClick={() => setFlipped(f => !f)}>
+          <div className={`fc-card${flipped ? ' flipped' : ''}`}>
+            {/* Front */}
+            <div className="fc-face fc-front">
+              <div style={s.cardSide}>Term</div>
+              <div style={s.cardTopic}>{card?.topic}</div>
+              <div style={s.cardFront}>{card?.front}</div>
+              <div style={s.tapHint}>Tap to reveal answer</div>
+            </div>
+            {/* Back */}
+            <div className="fc-face fc-back">
+              <div style={{ ...s.cardSide, color: 'var(--gold-light)' }}>Definition</div>
+              <div style={s.cardBack}>{card?.back}</div>
             </div>
           </div>
         </div>
 
         {flipped ? (
           <div style={s.actions}>
-            <button style={s.btnDontKnow} onClick={handleDontKnow}>Still learning</button>
-            <button style={s.btnKnow} onClick={handleKnow}>I knew this ✓</button>
+            <button style={s.btnDontKnow} onClick={e => { e.stopPropagation(); handleDontKnow() }}>Still learning</button>
+            <button style={s.btnKnow} onClick={e => { e.stopPropagation(); handleKnow() }}>I knew this ✓</button>
           </div>
         ) : (
           <div style={{ textAlign: 'center', marginBottom: '24px' }}>
@@ -189,9 +316,13 @@ Make them genuinely useful for WASSCE exam preparation. Cover different topics w
 
         <div style={s.dots}>
           {cards.map((_, i) => (
-            <div key={i} style={{ ...s.dot, background: i < current ? 'var(--teal)' : i === current ? 'var(--gold)' : 'var(--cream-dark)' }} />
+            <div key={i} style={{
+              ...s.dot,
+              background: i < current ? 'var(--teal)' : i === current ? 'var(--gold)' : 'var(--cream-dark)'
+            }} />
           ))}
         </div>
+
       </div>
     </div>
   )
@@ -221,12 +352,10 @@ const s = {
   genDot: { width: '10px', height: '10px', borderRadius: '50%', background: 'var(--gold)', animation: 'pulse 1s infinite' },
   genTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.2rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '8px' },
   genSub: { fontSize: '0.84rem', color: 'var(--ink-muted)' },
-  cardWrap: { perspective: '1000px', marginBottom: '22px', cursor: 'pointer' },
-  flashCard: { position: 'relative', height: '260px', transformStyle: 'preserve-3d', transition: 'transform 0.6s cubic-bezier(0.4,0,0.2,1)' },
-  flashCardFlipped: { transform: 'rotateY(180deg)' },
-  flashCardInner: { position: 'absolute', inset: 0 },
-  flashCardFront: { position: 'absolute', inset: 0, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', boxShadow: 'var(--shadow-md)' },
-  flashCardBack: { position: 'absolute', inset: 0, background: 'var(--forest)', border: '1px solid rgba(200,136,10,0.2)', borderRadius: 'var(--r-xl)', padding: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)' },
+  errorCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '40px', textAlign: 'center', maxWidth: '400px', width: '100%', boxShadow: 'var(--shadow-md)' },
+  errorIcon: { fontSize: '2.5rem', marginBottom: '12px' },
+  errorTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '10px' },
+  errorMsg: { fontSize: '0.86rem', color: 'var(--ink-muted)', marginBottom: '20px', lineHeight: 1.5 },
   cardSide: { fontSize: '0.65rem', fontWeight: '700', letterSpacing: '0.14em', color: 'var(--gold)', marginBottom: '10px', textTransform: 'uppercase' },
   cardTopic: { fontSize: '0.72rem', color: 'var(--ink-muted)', marginBottom: '14px', background: 'var(--surface-mid)', padding: '3px 10px', borderRadius: '20px' },
   cardFront: { fontFamily: 'var(--ff-serif)', fontSize: '1.25rem', fontWeight: '700', color: 'var(--ink)', lineHeight: 1.4 },
@@ -244,6 +373,6 @@ const s = {
   finishedNum: { fontFamily: 'var(--ff-serif)', fontSize: '2.5rem', fontWeight: '700', lineHeight: 1 },
   finishedLabel: { fontSize: '0.76rem', color: 'var(--ink-muted)', marginTop: '4px' },
   finishedActions: { display: 'flex', flexDirection: 'column', gap: '9px' },
-  btnPrimary: { width: '100%', padding: '12px', background: 'var(--forest)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  btnPrimary: { width: '100%', padding: '12px', background: 'var(--forest-mid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
   btnOutline: { width: '100%', padding: '12px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
 }
