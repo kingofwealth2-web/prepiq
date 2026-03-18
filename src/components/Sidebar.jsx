@@ -104,11 +104,13 @@ export default function Sidebar({ user, mobileOpen, onClose }) {
             <span style={s.navLabel}>{isDark ? 'Light mode' : 'Dark mode'}</span>
           </button>
 
-          {/* Premium */}
-          <button style={s.premBtn} onClick={() => go('/premium')}>
-            <span style={s.navIcon}>💎</span>
-            <span style={{ ...s.navLabel, fontWeight: '600', color: '#FCD34D' }}>Go Premium</span>
-          </button>
+          {/* Premium — only show for free users */}
+          {user?.plan !== 'premium' && (
+            <button style={s.premBtn} onClick={() => go('/premium')}>
+              <span style={s.navIcon}>💎</span>
+              <span style={{ ...s.navLabel, fontWeight: '600', color: '#FCD34D' }}>Go Premium</span>
+            </button>
+          )}
 
           <div style={s.divider} />
 
