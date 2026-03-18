@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
 import { updateStreak } from '../lib/streak'
 import MathText from '../components/MathText'
 
