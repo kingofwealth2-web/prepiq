@@ -13,6 +13,8 @@ export default function Sidebar({ user }) {
     { label: 'Flashcards', path: '/flashcards', icon: '🃏' },
     { label: 'Performance', path: '/performance', icon: '📊' },
     { label: 'Predictions', path: '/predictions', icon: '★' },
+    { label: 'Profile', path: '/profile', icon: '👤' },
+    { label: 'Quiz Game', path: '/game', icon: '⚡' },
   ]
 
   const handleLogout = async () => {
