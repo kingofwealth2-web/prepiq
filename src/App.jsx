@@ -13,6 +13,7 @@ import MockResults from './screens/MockResults'
 import Performance from './screens/Performance'
 import ExamReview from './screens/ExamReview'
 import StudyPlan from './screens/StudyPlan'
+import Flashcards from './screens/Flashcards'
 
 function App() {
   const [session, setSession] = useState(undefined)
@@ -44,6 +45,7 @@ function App() {
         <Route path="/performance" element={session ? <Performance /> : <Navigate to="/login" />} />
         <Route path="/mock/:id/review" element={session ? <ExamReview /> : <Navigate to="/login" />} /> 
         <Route path="/plan" element={session ? <StudyPlan /> : <Navigate to="/login" />} />
+        <Route path="/flashcards" element={session ? <Flashcards /> : <Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>
   )
