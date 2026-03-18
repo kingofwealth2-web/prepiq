@@ -295,8 +295,13 @@ Your role:
       setMessages(prev => [...prev, { role: 'nova', content: reply }])
       setExpression('happy')
       setTimeout(() => setExpression('idle'), 2000)
-    } catch {
-      setMessages(prev => [...prev, { role: 'nova', content: "Sorry, I couldn't connect right now. Check your internet and try again." }])
+    } catch (err) {
+      const msg = err?.message || ''
+      let userMsg = "Sorry, I couldn't connect right now. Try again in a moment."
+      if (msg.includes('quota') || msg.includes('429')) userMsg = "I've hit my AI quota limit. Please wait a minute and try again."
+      if (msg.includes('API key') || msg.includes('400')) userMsg = "There's an issue with the AI configuration. Please contact support."
+      if (msg.includes('model') || msg.includes('404')) userMsg = "AI model unavailable. Please try again shortly."
+      setMessages(prev => [...prev, { role: 'nova', content: userMsg }])
       setExpression('sad')
       setTimeout(() => setExpression('idle'), 2000)
     }
