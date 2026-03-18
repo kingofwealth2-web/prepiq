@@ -11,7 +11,7 @@ export default function Practice() {
   const [questions, setQuestions] = useState([])
   const [filters, setFilters] = useState({ subject: '', year: '', type: '', difficulty: '' })
   const [loading, setLoading] = useState(true)
-  const [mode, setMode] = useState('past') // 'past' | 'ai'
+  const [mode, setMode] = useState('past')
   const [aiSubject, setAiSubject] = useState(null)
   const [aiTopic, setAiTopic] = useState('')
   const [aiQuestions, setAiQuestions] = useState([])
@@ -34,11 +34,7 @@ export default function Practice() {
 
   async function loadQuestions() {
     setLoading(true)
-    let query = supabase
-      .from('questions')
-      .select(`*, subjects(name), topics(name), answer_options(*)`)
-      .order('created_at', { ascending: false })
-      .limit(50)
+    let query = supabase.from('questions').select(`*, subjects(name), topics(name), answer_options(*)`).order('created_at', { ascending: false }).limit(50)
     if (filters.subject) query = query.eq('subject_id', filters.subject)
     if (filters.year) query = query.eq('year', filters.year)
     if (filters.type) query = query.eq('question_type', filters.type)
@@ -50,34 +46,23 @@ export default function Practice() {
 
   async function generateAIQuestions() {
     if (!aiSubject || !aiTopic.trim()) return
-    setGeneratingAI(true)
-    setAiQuestions([])
+    setGeneratingAI(true); setAiQuestions([])
     try {
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ role: 'user', parts: [{ text:
               `Generate 5 WASSCE-style multiple choice questions for ${aiSubject.name} on the topic "${aiTopic}".
 Return ONLY a valid JSON array. Each object must have exactly:
-{
-  "body": "the question",
-  "option_a": "option A",
-  "option_b": "option B",
-  "option_c": "option C",
-  "option_d": "option D",
-  "correct": "A" or "B" or "C" or "D",
-  "explanation": "why the correct answer is right"
-}` }] }],
+{"body":"the question","option_a":"A","option_b":"B","option_c":"C","option_d":"D","correct":"A","explanation":"why correct"}` }] }],
           })
         }
       )
       const data = await response.json()
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]'
-      const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim()
-      const parsed = JSON.parse(cleaned)
+      const parsed = JSON.parse(text.replace(/```json/g, '').replace(/```/g, '').trim())
       setAiQuestions(parsed.map((q, i) => ({
         id: `ai-${i}`, body: q.body, question_type: 'OBJ',
         subjects: { name: aiSubject.name }, topics: { name: aiTopic },
@@ -89,9 +74,7 @@ Return ONLY a valid JSON array. Each object must have exactly:
         ],
         _explanation: q.explanation, _ai: true,
       })))
-    } catch (err) {
-      console.error('AI generation error:', err)
-    }
+    } catch (err) { console.error('AI generation error:', err) }
     setGeneratingAI(false)
   }
 
@@ -104,11 +87,11 @@ Return ONLY a valid JSON array. Each object must have exactly:
       <main style={s.main}>
         <div style={s.topbar}>
           <div style={s.topbarTitle}>Practice</div>
-          <button style={s.btnGold} onClick={() => navigate('/question/random')}>Random question</button>
+          <button style={s.btnPrimary} onClick={() => navigate('/question/random')}>Random question</button>
         </div>
         <div style={s.content}>
 
-          {/* MODE TOGGLE */}
+          {/* Mode toggle */}
           <div style={s.modeToggle}>
             <button style={{ ...s.modeBtn, ...(mode === 'past' ? s.modeBtnActive : {}) }} onClick={() => setMode('past')}>
               📚 Past questions
@@ -118,70 +101,70 @@ Return ONLY a valid JSON array. Each object must have exactly:
             </button>
           </div>
 
-          {/* PAST QUESTIONS MODE */}
+          {/* Past questions filters */}
           {mode === 'past' && (
-            <>
-              <div style={s.filterRow}>
-                <select style={s.select} value={filters.subject} onChange={e => setFilters({ ...filters, subject: e.target.value })}>
-                  <option value="">All subjects</option>
-                  {subjects.map(sub => <option key={sub.id} value={sub.id}>{sub.name}</option>)}
-                </select>
-                <select style={s.select} value={filters.year} onChange={e => setFilters({ ...filters, year: e.target.value })}>
-                  <option value="">All years</option>
-                  {years.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-                <select style={s.select} value={filters.type} onChange={e => setFilters({ ...filters, type: e.target.value })}>
-                  <option value="">All types</option>
-                  <option value="OBJ">OBJ</option>
-                  <option value="Theory">Theory</option>
-                  <option value="Essay">Essay</option>
-                </select>
-                <select style={s.select} value={filters.difficulty} onChange={e => setFilters({ ...filters, difficulty: e.target.value })}>
-                  <option value="">All difficulties</option>
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-                {(filters.subject || filters.year || filters.type || filters.difficulty) && (
-                  <button style={s.clearBtn} onClick={() => setFilters({ subject: '', year: '', type: '', difficulty: '' })}>Clear</button>
-                )}
-              </div>
-            </>
+            <div style={s.filterRow}>
+              <select style={s.select} value={filters.subject} onChange={e => setFilters({ ...filters, subject: e.target.value })}>
+                <option value="">All subjects</option>
+                {subjects.map(sub => <option key={sub.id} value={sub.id}>{sub.name}</option>)}
+              </select>
+              <select style={s.select} value={filters.year} onChange={e => setFilters({ ...filters, year: e.target.value })}>
+                <option value="">All years</option>
+                {years.map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+              <select style={s.select} value={filters.type} onChange={e => setFilters({ ...filters, type: e.target.value })}>
+                <option value="">All types</option>
+                <option value="OBJ">OBJ</option>
+                <option value="Theory">Theory</option>
+                <option value="Essay">Essay</option>
+              </select>
+              <select style={s.select} value={filters.difficulty} onChange={e => setFilters({ ...filters, difficulty: e.target.value })}>
+                <option value="">All difficulties</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+              {(filters.subject || filters.year || filters.type || filters.difficulty) && (
+                <button style={s.clearBtn} onClick={() => setFilters({ subject: '', year: '', type: '', difficulty: '' })}>Clear</button>
+              )}
+            </div>
           )}
 
-          {/* AI GENERATED MODE */}
+          {/* AI mode */}
           {mode === 'ai' && (
             <div style={s.aiPanel}>
               <div style={s.aiPanelHeader}>
-                <div style={s.aiPanelTitle}>Generate questions on any topic</div>
-                <div style={s.aiPanelSub}>Powered by Gemini — get 5 fresh WASSCE-style questions instantly</div>
+                <div style={s.kente} />
+                <h3 style={s.aiPanelTitle}>Generate questions on any topic</h3>
+                <p style={s.aiPanelSub}>Get 5 fresh WASSCE-style questions instantly</p>
               </div>
               <div style={s.aiControls}>
-                <select style={s.select} value={aiSubject?.id || ''}
-                  onChange={e => setAiSubject(subjects.find(s => s.id === e.target.value) || null)}>
+                <select style={s.select} value={aiSubject?.id || ''} onChange={e => setAiSubject(subjects.find(s => s.id === e.target.value) || null)}>
                   <option value="">Select subject</option>
                   {subjects.map(sub => <option key={sub.id} value={sub.id}>{sub.name}</option>)}
                 </select>
                 <input style={s.aiInput} placeholder="Enter a topic (e.g. Quadratic equations, Newton's laws...)"
                   value={aiTopic} onChange={e => setAiTopic(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && generateAIQuestions()} />
-                <button style={{ ...s.btnGold, opacity: (aiSubject && aiTopic.trim()) ? 1 : 0.5 }}
+                <button style={{ ...s.btnPrimary, opacity: (aiSubject && aiTopic.trim()) ? 1 : 0.45 }}
                   onClick={generateAIQuestions} disabled={!aiSubject || !aiTopic.trim() || generatingAI}>
                   {generatingAI ? 'Generating...' : 'Generate →'}
                 </button>
               </div>
               {generatingAI && (
                 <div style={s.aiLoading}>
-                  <div style={s.aiDot} /><div style={{ ...s.aiDot, animationDelay: '0.2s' }} /><div style={{ ...s.aiDot, animationDelay: '0.4s' }} />
+                  {[0, 0.2, 0.4].map((d, i) => <div key={i} style={{ ...s.aiDot, animationDelay: `${d}s` }} />)}
                   <span style={s.aiLoadText}>Generating 5 questions on "{aiTopic}"...</span>
                 </div>
               )}
             </div>
           )}
 
-          {/* QUESTION LIST */}
+          {/* Question list */}
           {loading && mode === 'past' ? (
-            <div style={s.loadState}>{[1,2,3,4,5].map(i => <div key={i} style={s.skeleton} />)}</div>
+            <div style={s.loadState}>
+              {[1,2,3,4,5].map(i => <div key={i} style={s.skeleton} />)}
+            </div>
           ) : displayQuestions.length === 0 && !generatingAI ? (
             <div style={s.emptyState}>
               <div style={s.emptyIcon}>{mode === 'ai' ? '✨' : '📭'}</div>
@@ -213,40 +196,41 @@ Return ONLY a valid JSON array. Each object must have exactly:
 }
 
 const s = {
-  shell: { display: 'flex', minHeight: '100vh', background: '#0D1117', fontFamily: 'DM Sans, sans-serif' },
-  main: { flex: 1, marginLeft: '240px', display: 'flex', flexDirection: 'column' },
-  topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', background: '#161B22', borderBottom: '1px solid rgba(240,246,252,0.06)', position: 'sticky', top: 0, zIndex: 40 },
-  topbarTitle: { fontFamily: 'Georgia, serif', fontSize: '1.05rem', fontWeight: '600', color: '#F0F6FC' },
-  btnGold: { padding: '9px 18px', background: '#F0A500', border: 'none', borderRadius: '8px', color: '#0D1117', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' },
-  content: { flex: 1, padding: '28px', paddingBottom: '80px' },
-  modeToggle: { display: 'flex', background: '#161B22', border: '1px solid rgba(240,246,252,0.06)', borderRadius: '12px', padding: '4px', marginBottom: '20px', width: 'fit-content', gap: '4px' },
-  modeBtn: { padding: '8px 20px', borderRadius: '9px', border: 'none', background: 'transparent', color: '#8B949E', fontSize: '0.85rem', fontWeight: '500', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif', transition: 'all 0.2s' },
-  modeBtnActive: { background: '#F0A500', color: '#0D1117', fontWeight: '700' },
-  filterRow: { display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '24px' },
-  select: { padding: '9px 14px', background: '#161B22', border: '1.5px solid rgba(240,246,252,0.08)', borderRadius: '8px', color: '#F0F6FC', fontSize: '0.85rem', fontFamily: 'DM Sans, sans-serif', cursor: 'pointer', outline: 'none' },
-  clearBtn: { padding: '9px 14px', background: 'transparent', border: '1.5px solid rgba(255,107,107,0.3)', borderRadius: '8px', color: '#FF6B6B', fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' },
-  aiPanel: { background: '#161B22', border: '1px solid rgba(240,165,0,0.2)', borderRadius: '14px', padding: '20px', marginBottom: '20px' },
-  aiPanelHeader: { marginBottom: '16px' },
-  aiPanelTitle: { fontFamily: 'Georgia, serif', fontSize: '1rem', fontWeight: '600', color: '#F0F6FC', marginBottom: '4px' },
-  aiPanelSub: { fontSize: '0.78rem', color: '#8B949E' },
-  aiControls: { display: 'flex', gap: '10px', flexWrap: 'wrap' },
-  aiInput: { flex: 1, minWidth: '200px', padding: '9px 14px', background: '#1C2330', border: '1.5px solid rgba(240,246,252,0.08)', borderRadius: '8px', color: '#F0F6FC', fontSize: '0.85rem', fontFamily: 'DM Sans, sans-serif', outline: 'none' },
-  aiLoading: { display: 'flex', alignItems: 'center', gap: '8px', marginTop: '14px' },
-  aiDot: { width: '7px', height: '7px', borderRadius: '50%', background: '#F0A500', animation: 'pulse 1s infinite' },
-  aiLoadText: { fontSize: '0.82rem', color: '#8B949E' },
-  loadState: { display: 'flex', flexDirection: 'column', gap: '10px' },
-  skeleton: { height: '80px', background: '#161B22', borderRadius: '10px' },
+  shell: { display: 'flex', minHeight: '100vh', background: 'var(--cream)', fontFamily: 'var(--ff-sans)' },
+  main: { flex: 1, marginLeft: '220px', display: 'flex', flexDirection: 'column' },
+  topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', background: '#fff', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
+  topbarTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
+  btnPrimary: { padding: '9px 18px', background: 'var(--forest)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.84rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  content: { flex: 1, padding: '24px 28px 80px' },
+  modeToggle: { display: 'flex', background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '4px', marginBottom: '18px', width: 'fit-content', gap: '3px' },
+  modeBtn: { padding: '7px 18px', borderRadius: '9px', border: 'none', background: 'transparent', color: 'var(--ink-muted)', fontSize: '0.84rem', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--ff-sans)', transition: 'all 0.15s' },
+  modeBtnActive: { background: 'var(--forest)', color: '#F7F3EE', fontWeight: '600' },
+  filterRow: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' },
+  select: { padding: '8px 12px', background: '#fff', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontSize: '0.84rem', fontFamily: 'var(--ff-sans)', cursor: 'pointer', outline: 'none', width: 'auto' },
+  clearBtn: { padding: '8px 14px', background: 'transparent', border: '1.5px solid rgba(200,16,46,0.25)', borderRadius: 'var(--r-sm)', color: 'var(--red)', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  aiPanel: { background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', marginBottom: '20px', position: 'relative', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' },
+  kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
+  aiPanelHeader: { marginBottom: '14px' },
+  aiPanelTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '3px' },
+  aiPanelSub: { fontSize: '0.78rem', color: 'var(--ink-muted)' },
+  aiControls: { display: 'flex', gap: '8px', flexWrap: 'wrap' },
+  aiInput: { flex: 1, minWidth: '200px', padding: '9px 13px', background: 'var(--cream)', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontSize: '0.84rem', fontFamily: 'var(--ff-sans)', outline: 'none' },
+  aiLoading: { display: 'flex', alignItems: 'center', gap: '7px', marginTop: '14px' },
+  aiDot: { width: '7px', height: '7px', borderRadius: '50%', background: 'var(--gold)', animation: 'pulse 1s infinite' },
+  aiLoadText: { fontSize: '0.8rem', color: 'var(--ink-muted)' },
+  loadState: { display: 'flex', flexDirection: 'column', gap: '8px' },
+  skeleton: { height: '76px', background: 'var(--cream-mid)', borderRadius: 'var(--r-md)', animation: 'pulse 1.5s infinite' },
   emptyState: { textAlign: 'center', padding: '60px 20px' },
   emptyIcon: { fontSize: '3rem', marginBottom: '12px' },
-  emptyTitle: { fontSize: '1.1rem', fontWeight: '600', color: '#F0F6FC', marginBottom: '6px', fontFamily: 'Georgia, serif' },
-  emptySub: { fontSize: '0.88rem', color: '#8B949E' },
-  qList: { display: 'flex', flexDirection: 'column', gap: '8px' },
-  qItem: { display: 'flex', alignItems: 'center', gap: '14px', background: '#161B22', border: '1px solid rgba(240,246,252,0.06)', borderRadius: '10px', padding: '16px 18px', cursor: 'pointer', transition: 'all 0.2s' },
+  emptyTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '6px' },
+  emptySub: { fontSize: '0.85rem', color: 'var(--ink-muted)' },
+  qList: { display: 'flex', flexDirection: 'column', gap: '6px' },
+  qItem: { display: 'flex', alignItems: 'center', gap: '14px', background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '15px 18px', cursor: 'pointer', transition: 'box-shadow 0.15s', boxShadow: 'var(--shadow-sm)' },
   qItemBody: { flex: 1 },
-  qItemMeta: { display: 'flex', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' },
-  qItemText: { fontSize: '0.88rem', color: '#F0F6FC', lineHeight: '1.4', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' },
-  qArrow: { color: '#484F58', flexShrink: 0 },
-  badgeGold: { background: 'rgba(240,165,0,0.1)', color: '#F0A500', border: '1px solid rgba(240,165,0,0.2)', padding: '3px 8px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '600' },
-  badgeMuted: { background: '#1C2330', color: '#8B949E', border: '1px solid rgba(240,246,252,0.06)', padding: '3px 8px', borderRadius: '20px', fontSize: '0.72rem' },
-  badgeAI: { background: 'rgba(74,158,255,0.1)', color: '#4A9EFF', border: '1px solid rgba(74,158,255,0.2)', padding: '3px 8px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '600' },
+  qItemMeta: { display: 'flex', gap: '6px', marginBottom: '6px', flexWrap: 'wrap' },
+  qItemText: { fontSize: '0.86rem', color: 'var(--ink)', lineHeight: '1.4', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' },
+  qArrow: { color: 'var(--ink-faint)', flexShrink: 0, fontSize: '0.9rem' },
+  badgeGold: { background: 'var(--gold-pale)', color: 'var(--gold)', border: '1px solid var(--gold-border)', padding: '2px 8px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: '600' },
+  badgeMuted: { background: 'var(--cream-mid)', color: 'var(--ink-muted)', padding: '2px 8px', borderRadius: '20px', fontSize: '0.7rem' },
+  badgeAI: { background: 'rgba(26,93,200,0.08)', color: '#1A5DC8', border: '1px solid rgba(26,93,200,0.2)', padding: '2px 8px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: '600' },
 }

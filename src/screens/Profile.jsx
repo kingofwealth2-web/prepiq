@@ -27,8 +27,7 @@ export default function Profile() {
     const { count: mockCount } = await supabase.from('mock_exams').select('*', { count: 'exact', head: true }).eq('user_id', authUser.id).not('submitted_at', 'is', null)
     const { count: responseCount } = await supabase.from('mock_responses').select('*', { count: 'exact', head: true })
       .in('exam_id', (await supabase.from('mock_exams').select('id').eq('user_id', authUser.id).then(({ data }) => data?.map(e => e.id) || [])))
-    setUser(profile)
-    setStreak(streakData)
+    setUser(profile); setStreak(streakData)
     setStats({ mocks: mockCount || 0, questions: responseCount || 0 })
     setForm({ full_name: profile?.full_name || '', exam_type: profile?.exam_type || 'WASSCE', exam_date: profile?.exam_date ? profile.exam_date.split('T')[0] : '' })
     setLoading(false)
@@ -37,14 +36,8 @@ export default function Profile() {
   async function handleSave() {
     setSaving(true)
     const { data: { user: authUser } } = await supabase.auth.getUser()
-    await supabase.from('users').update({
-      full_name: form.full_name,
-      exam_type: form.exam_type,
-      exam_date: form.exam_date || null,
-    }).eq('id', authUser.id)
-    setUser(prev => ({ ...prev, ...form }))
-    setEditing(false)
-    setSaving(false)
+    await supabase.from('users').update({ full_name: form.full_name, exam_type: form.exam_type, exam_date: form.exam_date || null }).eq('id', authUser.id)
+    setUser(prev => ({ ...prev, ...form })); setEditing(false); setSaving(false)
     setSavedMsg('Profile updated successfully')
     setTimeout(() => setSavedMsg(''), 3000)
   }
@@ -69,7 +62,7 @@ export default function Profile() {
     return Math.max(0, Math.ceil((new Date(user.exam_date) - new Date()) / 86400000))
   }
 
-  if (loading) return <div style={s.loadShell}><div style={s.loadText}>Loading profile...</div></div>
+  if (loading) return <div style={s.loadShell}><div style={s.spinner} /></div>
 
   return (
     <div style={s.shell}>
@@ -80,9 +73,9 @@ export default function Profile() {
 
           {savedMsg && <div style={s.successBanner}>{savedMsg}</div>}
 
-          {/* PROFILE HEADER */}
-          <div style={s.profileHero}>
-            <div style={s.heroKente} />
+          {/* Profile hero */}
+          <div style={s.hero}>
+            <div style={s.kente} />
             <div style={s.avatarLg}>{user?.full_name?.[0]?.toUpperCase() || 'P'}</div>
             <div style={s.heroInfo}>
               <div style={s.heroName}>{user?.full_name || 'Student'}</div>
@@ -95,106 +88,77 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* STATS */}
+          {/* Stats */}
           <div style={s.statsRow}>
-            <div style={s.statCard}>
-              <div style={s.statNum}>{stats.mocks}</div>
-              <div style={s.statLabel}>Mock exams</div>
-            </div>
-            <div style={s.statCard}>
-              <div style={s.statNum}>{stats.questions}</div>
-              <div style={s.statLabel}>Questions answered</div>
-            </div>
-            <div style={s.statCard}>
-              <div style={{ ...s.statNum, color: '#FF6B6B' }}>{streak?.current_streak || 0}🔥</div>
-              <div style={s.statLabel}>Day streak</div>
-            </div>
-            <div style={s.statCard}>
-              <div style={s.statNum}>{streak?.longest_streak || 0}</div>
-              <div style={s.statLabel}>Best streak</div>
-            </div>
+            {[
+              { num: stats.mocks, label: 'Mock exams' },
+              { num: stats.questions, label: 'Questions answered' },
+              { num: `${streak?.current_streak || 0}🔥`, label: 'Day streak' },
+              { num: streak?.longest_streak || 0, label: 'Best streak' },
+            ].map((st, i) => (
+              <div key={i} style={s.statCard}>
+                <div style={s.statNum}>{st.num}</div>
+                <div style={s.statLabel}>{st.label}</div>
+              </div>
+            ))}
           </div>
 
-          {/* EDIT PROFILE */}
+          {/* Personal details */}
           <div style={s.section}>
             <div style={s.sectionHeader}>
               <h3 style={s.sectionTitle}>Personal details</h3>
-              <button style={s.editBtn} onClick={() => setEditing(e => !e)}>
-                {editing ? 'Cancel' : 'Edit'}
-              </button>
+              <button style={s.editBtn} onClick={() => setEditing(e => !e)}>{editing ? 'Cancel' : 'Edit'}</button>
             </div>
             {editing ? (
               <div style={s.editForm}>
                 <div style={s.formGroup}>
-                  <label style={s.formLabel}>Full name</label>
-                  <input style={s.input} value={form.full_name}
-                    onChange={e => setForm({ ...form, full_name: e.target.value })}
-                    placeholder="Your full name" />
+                  <label style={s.label}>Full name</label>
+                  <input value={form.full_name} onChange={e => setForm({ ...form, full_name: e.target.value })} placeholder="Your full name" />
                 </div>
                 <div style={s.formGroup}>
-                  <label style={s.formLabel}>Exam type</label>
-                  <select style={s.input} value={form.exam_type}
-                    onChange={e => setForm({ ...form, exam_type: e.target.value })}>
+                  <label style={s.label}>Exam type</label>
+                  <select value={form.exam_type} onChange={e => setForm({ ...form, exam_type: e.target.value })}>
                     <option value="WASSCE">WASSCE</option>
                     <option value="BECE">BECE</option>
                     <option value="University">University Entrance</option>
                   </select>
                 </div>
                 <div style={s.formGroup}>
-                  <label style={s.formLabel}>Exam date</label>
-                  <input style={s.input} type="date" value={form.exam_date}
-                    onChange={e => setForm({ ...form, exam_date: e.target.value })} />
+                  <label style={s.label}>Exam date</label>
+                  <input type="date" value={form.exam_date} onChange={e => setForm({ ...form, exam_date: e.target.value })} />
                 </div>
-                <button style={s.btnGold} onClick={handleSave} disabled={saving}>
-                  {saving ? 'Saving...' : 'Save changes'}
-                </button>
+                <button style={s.btnPrimary} onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save changes'}</button>
               </div>
             ) : (
               <div style={s.detailList}>
-                <div style={s.detailRow}>
-                  <div style={s.detailLabel}>Full name</div>
-                  <div style={s.detailValue}>{user?.full_name || '—'}</div>
-                </div>
-                <div style={s.detailRow}>
-                  <div style={s.detailLabel}>Email</div>
-                  <div style={s.detailValue}>{user?.email}</div>
-                </div>
-                <div style={s.detailRow}>
-                  <div style={s.detailLabel}>Exam type</div>
-                  <div style={s.detailValue}>{user?.exam_type || '—'}</div>
-                </div>
-                <div style={s.detailRow}>
-                  <div style={s.detailLabel}>Exam date</div>
-                  <div style={s.detailValue}>{user?.exam_date ? new Date(user.exam_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '—'}</div>
-                </div>
+                {[['Full name', user?.full_name || '—'], ['Email', user?.email], ['Exam type', user?.exam_type || '—'], ['Exam date', user?.exam_date ? new Date(user.exam_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '—']].map(([label, val]) => (
+                  <div key={label} style={s.detailRow}>
+                    <div style={s.detailLabel}>{label}</div>
+                    <div style={s.detailValue}>{val}</div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
 
-          {/* CHANGE PASSWORD */}
+          {/* Password */}
           <div style={s.section}>
             <div style={s.sectionHeader}>
               <h3 style={s.sectionTitle}>Password</h3>
-              <button style={s.editBtn} onClick={() => setChangingPassword(c => !c)}>
-                {changingPassword ? 'Cancel' : 'Change'}
-              </button>
+              <button style={s.editBtn} onClick={() => setChangingPassword(c => !c)}>{changingPassword ? 'Cancel' : 'Change'}</button>
             </div>
             {changingPassword ? (
               <div style={s.editForm}>
-                {pwMsg && <div style={{ ...s.successBanner, marginBottom: '12px', background: pwMsg.includes('success') ? 'rgba(0,200,150,0.1)' : 'rgba(255,107,107,0.1)', borderColor: pwMsg.includes('success') ? 'rgba(0,200,150,0.3)' : 'rgba(255,107,107,0.3)', color: pwMsg.includes('success') ? '#00C896' : '#FF6B6B' }}>{pwMsg}</div>}
+                {pwMsg && <div style={{ ...s.successBanner, background: pwMsg.includes('success') ? 'var(--teal-pale)' : 'var(--red-pale)', borderColor: pwMsg.includes('success') ? 'rgba(0,158,115,0.2)' : 'rgba(200,16,46,0.2)', color: pwMsg.includes('success') ? 'var(--teal)' : 'var(--red)' }}>{pwMsg}</div>}
                 <div style={s.formGroup}>
-                  <label style={s.formLabel}>New password</label>
-                  <input style={s.input} type="password" value={pwForm.newPassword}
-                    onChange={e => setPwForm({ ...pwForm, newPassword: e.target.value })}
-                    placeholder="Min. 8 characters" />
+                  <label style={s.label}>New password</label>
+                  <input type="password" value={pwForm.newPassword} onChange={e => setPwForm({ ...pwForm, newPassword: e.target.value })} placeholder="Min. 8 characters" />
                 </div>
                 <div style={s.formGroup}>
-                  <label style={s.formLabel}>Confirm new password</label>
-                  <input style={s.input} type="password" value={pwForm.confirm}
-                    onChange={e => setPwForm({ ...pwForm, confirm: e.target.value })}
-                    placeholder="Repeat new password" />
+                  <label style={s.label}>Confirm new password</label>
+                  <input type="password" value={pwForm.confirm} onChange={e => setPwForm({ ...pwForm, confirm: e.target.value })} placeholder="Repeat new password" />
                 </div>
-                <button style={s.btnGold} onClick={handlePasswordChange}>Update password</button>
+                <button style={s.btnPrimary} onClick={handlePasswordChange}>Update password</button>
               </div>
             ) : (
               <div style={s.detailRow}>
@@ -204,49 +168,26 @@ export default function Profile() {
             )}
           </div>
 
-          {/* SETTINGS */}
+          {/* Settings */}
           <div style={s.section}>
-            <h3 style={{ ...s.sectionTitle, marginBottom: '12px' }}>Settings</h3>
-            <div style={s.settingsList}>
-              <div style={s.settingItem} onClick={() => navigate('/premium')}>
-                <div style={s.settingLeft}>
-                  <div style={s.settingIcon}>💎</div>
-                  <div>
-                    <div style={s.settingName}>Upgrade to Premium</div>
-                    <div style={s.settingDesc}>Unlimited AI, predictions, offline packs</div>
+            <h3 style={{ ...s.sectionTitle, marginBottom: '10px' }}>Settings</h3>
+            <div>
+              {[
+                { icon: '💎', name: 'Upgrade to Premium', desc: 'Unlimited AI, predictions, offline packs', path: '/premium', danger: false },
+                { icon: '🃏', name: 'Flashcards', desc: 'Study key terms and definitions', path: '/flashcards', danger: false },
+                { icon: '⚡', name: 'Quiz Game', desc: 'Rapid-fire quiz with points and streaks', path: '/game', danger: false },
+                { icon: '🚪', name: 'Log out', desc: 'Sign out of your account', path: null, danger: true },
+              ].map((item, i) => (
+                <div key={i} style={{ ...s.settingItem, borderBottom: i < 3 ? '1px solid var(--border)' : 'none' }}
+                  onClick={() => item.path ? navigate(item.path) : handleLogout()}>
+                  <div style={{ ...s.settingIcon, background: item.danger ? 'var(--red-pale)' : 'var(--cream)' }}>{item.icon}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ ...s.settingName, color: item.danger ? 'var(--red)' : 'var(--ink)' }}>{item.name}</div>
+                    <div style={s.settingDesc}>{item.desc}</div>
                   </div>
+                  {!item.danger && <div style={s.settingArrow}>→</div>}
                 </div>
-                <div style={s.settingArrow}>→</div>
-              </div>
-              <div style={s.settingItem} onClick={() => navigate('/flashcards')}>
-                <div style={s.settingLeft}>
-                  <div style={s.settingIcon}>🃏</div>
-                  <div>
-                    <div style={s.settingName}>Flashcards</div>
-                    <div style={s.settingDesc}>Study key terms and definitions</div>
-                  </div>
-                </div>
-                <div style={s.settingArrow}>→</div>
-              </div>
-              <div style={s.settingItem} onClick={() => navigate('/game')}>
-                <div style={s.settingLeft}>
-                  <div style={s.settingIcon}>⚡</div>
-                  <div>
-                    <div style={s.settingName}>Quiz Game</div>
-                    <div style={s.settingDesc}>Rapid-fire quiz with points and streaks</div>
-                  </div>
-                </div>
-                <div style={s.settingArrow}>→</div>
-              </div>
-              <div style={{ ...s.settingItem, borderBottom: 'none' }} onClick={handleLogout}>
-                <div style={s.settingLeft}>
-                  <div style={{ ...s.settingIcon, background: 'rgba(255,107,107,0.1)' }}>🚪</div>
-                  <div>
-                    <div style={{ ...s.settingName, color: '#FF6B6B' }}>Log out</div>
-                    <div style={s.settingDesc}>Sign out of your account</div>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -257,45 +198,42 @@ export default function Profile() {
 }
 
 const s = {
-  shell: { display: 'flex', minHeight: '100vh', background: '#0D1117', fontFamily: 'DM Sans, sans-serif' },
-  loadShell: { minHeight: '100vh', background: '#0D1117', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  loadText: { color: '#8B949E' },
-  main: { flex: 1, marginLeft: '240px', display: 'flex', flexDirection: 'column' },
-  topbar: { height: '56px', display: 'flex', alignItems: 'center', padding: '0 28px', background: '#161B22', borderBottom: '1px solid rgba(240,246,252,0.06)', position: 'sticky', top: 0, zIndex: 40 },
-  topbarTitle: { fontFamily: 'Georgia, serif', fontSize: '1.05rem', fontWeight: '600', color: '#F0F6FC' },
-  content: { flex: 1, padding: '28px', paddingBottom: '60px', maxWidth: '700px' },
-  successBanner: { background: 'rgba(0,200,150,0.1)', border: '1px solid rgba(0,200,150,0.3)', color: '#00C896', padding: '10px 16px', borderRadius: '8px', fontSize: '0.85rem', marginBottom: '20px' },
-  profileHero: { background: '#161B22', border: '1px solid rgba(240,246,252,0.06)', borderRadius: '18px', padding: '28px', display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px', position: 'relative', overflow: 'hidden', flexWrap: 'wrap' },
-  heroKente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#F0A500 0,#F0A500 20px,#00C896 20px,#00C896 40px,#FF6B6B 40px,#FF6B6B 60px,#4A9EFF 60px,#4A9EFF 80px)' },
-  avatarLg: { width: '72px', height: '72px', borderRadius: '50%', background: '#F0A500', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Georgia, serif', fontSize: '1.8rem', fontWeight: '700', color: '#0D1117', flexShrink: 0 },
+  shell: { display: 'flex', minHeight: '100vh', background: 'var(--cream)', fontFamily: 'var(--ff-sans)' },
+  loadShell: { minHeight: '100vh', background: 'var(--cream)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  spinner: { width: '32px', height: '32px', border: '3px solid var(--border-mid)', borderTopColor: 'var(--gold)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
+  main: { flex: 1, marginLeft: '220px', display: 'flex', flexDirection: 'column' },
+  topbar: { height: '56px', display: 'flex', alignItems: 'center', padding: '0 28px', background: '#fff', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
+  topbarTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
+  content: { flex: 1, padding: '24px 28px 60px', maxWidth: '680px' },
+  successBanner: { background: 'var(--teal-pale)', border: '1px solid rgba(0,158,115,0.2)', color: 'var(--teal)', padding: '10px 16px', borderRadius: 'var(--r-sm)', fontSize: '0.84rem', marginBottom: '18px' },
+  hero: { background: 'var(--forest)', borderRadius: 'var(--r-xl)', padding: '28px', display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '16px', position: 'relative', overflow: 'hidden', flexWrap: 'wrap' },
+  kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
+  avatarLg: { width: '68px', height: '68px', borderRadius: '50%', background: 'var(--gold-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--ff-serif)', fontSize: '1.7rem', fontWeight: '700', color: 'var(--forest)', flexShrink: 0 },
   heroInfo: { flex: 1 },
-  heroName: { fontFamily: 'Georgia, serif', fontSize: '1.4rem', fontWeight: '700', color: '#F0F6FC', marginBottom: '4px' },
-  heroEmail: { fontSize: '0.82rem', color: '#8B949E', marginBottom: '10px' },
-  heroBadges: { display: 'flex', gap: '8px', flexWrap: 'wrap' },
-  badge: { background: 'rgba(240,165,0,0.1)', color: '#F0A500', border: '1px solid rgba(240,165,0,0.2)', padding: '3px 10px', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '600' },
-  badgeMuted: { background: '#1C2330', color: '#8B949E', border: '1px solid rgba(240,246,252,0.08)', padding: '3px 10px', borderRadius: '20px', fontSize: '0.75rem' },
-  statsRow: { display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '12px', marginBottom: '20px' },
-  statCard: { background: '#161B22', border: '1px solid rgba(240,246,252,0.06)', borderRadius: '12px', padding: '16px', textAlign: 'center' },
-  statNum: { fontFamily: 'Georgia, serif', fontSize: '1.8rem', fontWeight: '700', color: '#F0A500', lineHeight: 1, marginBottom: '4px' },
-  statLabel: { fontSize: '0.72rem', color: '#8B949E' },
-  section: { background: '#161B22', border: '1px solid rgba(240,246,252,0.06)', borderRadius: '14px', padding: '20px', marginBottom: '16px' },
-  sectionHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' },
-  sectionTitle: { fontFamily: 'Georgia, serif', fontSize: '1rem', fontWeight: '600', color: '#F0F6FC' },
-  editBtn: { background: 'transparent', border: '1.5px solid rgba(240,246,252,0.1)', borderRadius: '8px', color: '#8B949E', fontSize: '0.8rem', padding: '6px 14px', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' },
-  editForm: { display: 'flex', flexDirection: 'column', gap: '14px' },
+  heroName: { fontFamily: 'var(--ff-serif)', fontSize: '1.4rem', fontWeight: '700', color: '#F7F3EE', marginBottom: '3px' },
+  heroEmail: { fontSize: '0.8rem', color: 'rgba(247,243,238,0.45)', marginBottom: '10px' },
+  heroBadges: { display: 'flex', gap: '7px', flexWrap: 'wrap' },
+  badge: { background: 'rgba(200,136,10,0.2)', color: 'var(--gold-light)', border: '1px solid rgba(200,136,10,0.3)', padding: '3px 10px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '600' },
+  badgeMuted: { background: 'rgba(247,243,238,0.08)', color: 'rgba(247,243,238,0.5)', padding: '3px 10px', borderRadius: '20px', fontSize: '0.72rem' },
+  statsRow: { display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px', marginBottom: '16px' },
+  statCard: { background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '15px', textAlign: 'center', boxShadow: 'var(--shadow-sm)' },
+  statNum: { fontFamily: 'var(--ff-serif)', fontSize: '1.7rem', fontWeight: '700', color: 'var(--gold)', lineHeight: 1, marginBottom: '4px' },
+  statLabel: { fontSize: '0.7rem', color: 'var(--ink-muted)', fontWeight: '500' },
+  section: { background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', marginBottom: '14px', boxShadow: 'var(--shadow-sm)' },
+  sectionHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' },
+  sectionTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)' },
+  editBtn: { background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink-muted)', fontSize: '0.78rem', padding: '6px 14px', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  editForm: { display: 'flex', flexDirection: 'column', gap: '13px' },
   formGroup: { display: 'flex', flexDirection: 'column', gap: '5px' },
-  formLabel: { fontSize: '0.75rem', fontWeight: '600', color: '#8B949E', letterSpacing: '0.06em', textTransform: 'uppercase' },
-  input: { padding: '11px 14px', background: '#1C2330', border: '1.5px solid rgba(240,246,252,0.08)', borderRadius: '8px', color: '#F0F6FC', fontSize: '0.88rem', fontFamily: 'DM Sans, sans-serif', outline: 'none' },
-  btnGold: { padding: '12px', background: '#F0A500', border: 'none', borderRadius: '8px', color: '#0D1117', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'DM Sans, sans-serif' },
-  detailList: { display: 'flex', flexDirection: 'column', gap: '0' },
-  detailRow: { display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid rgba(240,246,252,0.04)' },
-  detailLabel: { fontSize: '0.85rem', color: '#8B949E' },
-  detailValue: { fontSize: '0.85rem', color: '#F0F6FC', fontWeight: '500' },
-  settingsList: { display: 'flex', flexDirection: 'column' },
-  settingItem: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', borderBottom: '1px solid rgba(240,246,252,0.06)', cursor: 'pointer' },
-  settingLeft: { display: 'flex', alignItems: 'center', gap: '12px' },
-  settingIcon: { width: '36px', height: '36px', borderRadius: '10px', background: '#1C2330', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', flexShrink: 0 },
-  settingName: { fontSize: '0.88rem', fontWeight: '600', color: '#F0F6FC', marginBottom: '2px' },
-  settingDesc: { fontSize: '0.75rem', color: '#8B949E' },
-  settingArrow: { color: '#484F58', fontSize: '1rem' },
+  label: { fontSize: '0.7rem', fontWeight: '600', color: 'var(--ink-muted)', letterSpacing: '0.06em', textTransform: 'uppercase' },
+  btnPrimary: { padding: '12px', background: 'var(--forest)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  detailList: { display: 'flex', flexDirection: 'column' },
+  detailRow: { display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid var(--border)' },
+  detailLabel: { fontSize: '0.84rem', color: 'var(--ink-muted)' },
+  detailValue: { fontSize: '0.84rem', color: 'var(--ink)', fontWeight: '500' },
+  settingItem: { display: 'flex', alignItems: 'center', gap: '12px', padding: '13px 0', cursor: 'pointer' },
+  settingIcon: { width: '36px', height: '36px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', flexShrink: 0 },
+  settingName: { fontSize: '0.86rem', fontWeight: '600', marginBottom: '2px' },
+  settingDesc: { fontSize: '0.73rem', color: 'var(--ink-muted)' },
+  settingArrow: { color: 'var(--ink-faint)', fontSize: '0.9rem' },
 }

@@ -17,11 +17,8 @@ export default function Performance() {
     const { data: { user: authUser } } = await supabase.auth.getUser()
     const { data: profile } = await supabase.from('users').select('*').eq('id', authUser.id).single()
     setUser(profile)
-
-    const { data: exams } = await supabase
-      .from('mock_exams').select('*').eq('user_id', authUser.id)
+    const { data: exams } = await supabase.from('mock_exams').select('*').eq('user_id', authUser.id)
       .not('submitted_at', 'is', null).order('submitted_at', { ascending: false }).limit(10)
-
     const examResults = []
     for (const exam of (exams || [])) {
       const { data: res } = await supabase.from('mock_responses').select('is_correct').eq('exam_id', exam.id)
@@ -29,7 +26,6 @@ export default function Performance() {
       const total = res?.length || 0
       examResults.push({ ...exam, score: total > 0 ? Math.round((correct / total) * 100) : 0, correct, total })
     }
-
     const subjectMap = {}
     for (const exam of (exams || [])) {
       const { data: res } = await supabase.from('mock_responses').select(`*, questions(subjects(name))`).eq('exam_id', exam.id)
@@ -40,37 +36,28 @@ export default function Performance() {
         if (r.is_correct) subjectMap[name].correct++
       })
     }
-
     const subjectList = Object.entries(subjectMap).map(([name, data]) => ({
-      name, score: data.total > 0 ? Math.round((data.correct / data.total) * 100) : 0,
-      correct: data.correct, total: data.total,
+      name, score: data.total > 0 ? Math.round((data.correct / data.total) * 100) : 0, ...data
     }))
-
     const totalCorrect = examResults.reduce((a, e) => a + e.correct, 0)
     const totalAnswered = examResults.reduce((a, e) => a + e.total, 0)
     const avgScore = examResults.length > 0 ? Math.round(examResults.reduce((a, e) => a + e.score, 0) / examResults.length) : 0
-
     setStats({ totalExams: examResults.length, avgScore, totalAnswered, accuracy: totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0 })
-    setMockHistory(examResults)
-    setSubjectStats(subjectList)
-    setLoading(false)
+    setMockHistory(examResults); setSubjectStats(subjectList); setLoading(false)
   }
 
-  const getGrade = (score) => {
-    if (score >= 80) return { grade: 'A1', color: '#00C896' }
-    if (score >= 75) return { grade: 'B2', color: '#00C896' }
-    if (score >= 70) return { grade: 'B3', color: '#F0A500' }
-    if (score >= 65) return { grade: 'C4', color: '#F0A500' }
-    if (score >= 60) return { grade: 'C5', color: '#F0A500' }
-    if (score >= 55) return { grade: 'C6', color: '#F0A500' }
-    if (score >= 50) return { grade: 'D7', color: '#FF6B6B' }
-    return { grade: 'F9', color: '#FF6B6B' }
+  const getGrade = score => {
+    if (score >= 80) return { grade: 'A1', color: 'var(--teal)' }
+    if (score >= 70) return { grade: 'B', color: 'var(--gold)' }
+    if (score >= 55) return { grade: 'C', color: 'var(--gold)' }
+    if (score >= 50) return { grade: 'D7', color: 'var(--red)' }
+    return { grade: 'F9', color: 'var(--red)' }
   }
 
   const predictedGrade = stats?.avgScore ? getGrade(stats.avgScore) : null
 
   if (loading) return (
-    <div style={s.loadShell}><div style={s.loadText}>Loading performance data...</div></div>
+    <div style={s.loadShell}><div style={s.spinner} /></div>
   )
 
   return (
@@ -79,17 +66,21 @@ export default function Performance() {
       <main style={s.main}>
         <div style={s.topbar}><div style={s.topbarTitle}>Performance</div></div>
         <div style={s.content}>
+
           <div style={s.hero}>
-            <div style={s.heroKente} />
+            <div style={s.kente} />
             <div style={s.heroLeft}>
               <div style={s.heroLabel}>Predicted WASSCE grade</div>
-              <div style={{ ...s.heroGrade, color: predictedGrade?.color || '#8B949E' }}>{predictedGrade?.grade || '—'}</div>
+              <div style={{ ...s.heroGrade, color: predictedGrade?.color || 'var(--ink-faint)' }}>{predictedGrade?.grade || '—'}</div>
               <div style={s.heroSub}>Based on {stats?.totalExams || 0} mock exams · {stats?.totalAnswered || 0} questions</div>
             </div>
             <div style={s.heroStats}>
-              <div style={s.heroStat}><div style={s.heroStatNum}>{stats?.avgScore || 0}%</div><div style={s.heroStatLabel}>Avg score</div></div>
-              <div style={s.heroStat}><div style={s.heroStatNum}>{stats?.accuracy || 0}%</div><div style={s.heroStatLabel}>Accuracy</div></div>
-              <div style={s.heroStat}><div style={s.heroStatNum}>{stats?.totalExams || 0}</div><div style={s.heroStatLabel}>Mocks done</div></div>
+              {[{ num: `${stats?.avgScore || 0}%`, label: 'Avg score' }, { num: `${stats?.accuracy || 0}%`, label: 'Accuracy' }, { num: stats?.totalExams || 0, label: 'Mocks done' }].map((st, i) => (
+                <div key={i} style={s.heroStat}>
+                  <div style={s.heroStatNum}>{st.num}</div>
+                  <div style={s.heroStatLabel}>{st.label}</div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -119,7 +110,7 @@ export default function Performance() {
                 return (
                   <div key={exam.id} style={s.examRow}>
                     <div style={s.examNum}>#{i + 1}</div>
-                    <div style={s.examInfo}>
+                    <div style={{ flex: 1 }}>
                       <div style={s.examDate}>{new Date(exam.submitted_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                       <div style={s.examDetail}>{exam.correct}/{exam.total} correct</div>
                     </div>
@@ -133,12 +124,11 @@ export default function Performance() {
 
           <div style={s.card}>
             <h3 style={s.cardTitle}>Study activity — last 5 weeks</h3>
-            <div style={s.heatmapWrap}>
+            <div style={s.heatWrap}>
               {Array.from({ length: 35 }, (_, i) => {
-                const date = new Date()
-                date.setDate(date.getDate() - (34 - i))
+                const date = new Date(); date.setDate(date.getDate() - (34 - i))
                 const hasActivity = mockHistory.some(e => new Date(e.submitted_at).toDateString() === date.toDateString())
-                return <div key={i} style={{ ...s.heatCell, background: hasActivity ? '#F0A500' : '#1C2330' }} />
+                return <div key={i} style={{ ...s.heatCell, background: hasActivity ? 'var(--gold)' : 'var(--cream-mid)' }} />
               })}
             </div>
           </div>
@@ -149,40 +139,39 @@ export default function Performance() {
 }
 
 const s = {
-  shell: { display: 'flex', minHeight: '100vh', background: '#0D1117', fontFamily: 'DM Sans, sans-serif' },
-  loadShell: { minHeight: '100vh', background: '#0D1117', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  loadText: { color: '#8B949E' },
-  main: { flex: 1, marginLeft: '240px', display: 'flex', flexDirection: 'column' },
-  topbar: { height: '56px', display: 'flex', alignItems: 'center', padding: '0 28px', background: '#161B22', borderBottom: '1px solid rgba(240,246,252,0.06)', position: 'sticky', top: 0, zIndex: 40 },
-  topbarTitle: { fontFamily: 'Georgia, serif', fontSize: '1.05rem', fontWeight: '600', color: '#F0F6FC' },
-  content: { flex: 1, padding: '28px', paddingBottom: '60px' },
-  hero: { background: '#161B22', border: '1px solid rgba(240,246,252,0.06)', borderRadius: '18px', padding: '28px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', position: 'relative', overflow: 'hidden', flexWrap: 'wrap', gap: '20px' },
-  heroKente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#F0A500 0,#F0A500 20px,#00C896 20px,#00C896 40px,#FF6B6B 40px,#FF6B6B 60px,#4A9EFF 60px,#4A9EFF 80px)' },
-  heroLeft: { display: 'flex', flexDirection: 'column', gap: '6px' },
-  heroLabel: { fontSize: '0.72rem', fontWeight: '600', letterSpacing: '0.1em', color: '#8B949E', textTransform: 'uppercase' },
-  heroGrade: { fontFamily: 'Georgia, serif', fontSize: '4rem', fontWeight: '900', lineHeight: 1 },
-  heroSub: { fontSize: '0.82rem', color: '#8B949E' },
+  shell: { display: 'flex', minHeight: '100vh', background: 'var(--cream)', fontFamily: 'var(--ff-sans)' },
+  loadShell: { minHeight: '100vh', background: 'var(--cream)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  spinner: { width: '32px', height: '32px', border: '3px solid var(--border-mid)', borderTopColor: 'var(--gold)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
+  main: { flex: 1, marginLeft: '220px', display: 'flex', flexDirection: 'column' },
+  topbar: { height: '56px', display: 'flex', alignItems: 'center', padding: '0 28px', background: '#fff', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
+  topbarTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
+  content: { flex: 1, padding: '24px 28px 60px' },
+  hero: { background: 'var(--forest)', borderRadius: 'var(--r-xl)', padding: '28px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', position: 'relative', overflow: 'hidden', flexWrap: 'wrap', gap: '20px' },
+  kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
+  heroLeft: {},
+  heroLabel: { fontSize: '0.68rem', fontWeight: '600', letterSpacing: '0.12em', color: 'rgba(247,243,238,0.45)', textTransform: 'uppercase', marginBottom: '6px' },
+  heroGrade: { fontFamily: 'var(--ff-serif)', fontSize: '4rem', fontWeight: '700', lineHeight: 1, marginBottom: '8px' },
+  heroSub: { fontSize: '0.8rem', color: 'rgba(247,243,238,0.45)' },
   heroStats: { display: 'flex', gap: '32px' },
   heroStat: { textAlign: 'center' },
-  heroStatNum: { fontFamily: 'Georgia, serif', fontSize: '1.8rem', fontWeight: '700', color: '#F0A500' },
-  heroStatLabel: { fontSize: '0.72rem', color: '#8B949E', marginTop: '2px' },
-  grid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' },
-  card: { background: '#161B22', border: '1px solid rgba(240,246,252,0.06)', borderRadius: '14px', padding: '20px', marginBottom: '16px' },
-  cardTitle: { fontFamily: 'Georgia, serif', fontSize: '1rem', fontWeight: '600', color: '#F0F6FC', marginBottom: '16px' },
-  empty: { fontSize: '0.85rem', color: '#8B949E', textAlign: 'center', padding: '20px 0' },
-  link: { color: '#F0A500', cursor: 'pointer', fontWeight: '600' },
-  subjectRow: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' },
-  subjectName: { fontSize: '0.85rem', color: '#F0F6FC', width: '140px', flexShrink: 0 },
-  barWrap: { flex: 1, height: '6px', background: '#1C2330', borderRadius: '3px', overflow: 'hidden' },
+  heroStatNum: { fontFamily: 'var(--ff-serif)', fontSize: '1.8rem', fontWeight: '700', color: 'var(--gold-light)', lineHeight: 1 },
+  heroStatLabel: { fontSize: '0.7rem', color: 'rgba(247,243,238,0.45)', marginTop: '3px' },
+  grid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' },
+  card: { background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', marginBottom: '14px', boxShadow: 'var(--shadow-sm)' },
+  cardTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '16px' },
+  empty: { fontSize: '0.84rem', color: 'var(--ink-muted)', textAlign: 'center', padding: '20px 0' },
+  link: { color: 'var(--gold)', cursor: 'pointer', fontWeight: '600' },
+  subjectRow: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' },
+  subjectName: { fontSize: '0.84rem', color: 'var(--ink)', width: '130px', flexShrink: 0 },
+  barWrap: { flex: 1, height: '5px', background: 'var(--cream-mid)', borderRadius: '3px', overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: '3px', transition: 'width 1s ease' },
-  subjectScore: { fontSize: '0.82rem', fontWeight: '600', width: '40px', textAlign: 'right' },
-  examRow: { display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 0', borderBottom: '1px solid rgba(240,246,252,0.04)' },
-  examNum: { fontSize: '0.75rem', color: '#484F58', width: '24px' },
-  examInfo: { flex: 1 },
-  examDate: { fontSize: '0.85rem', color: '#F0F6FC', fontWeight: '500' },
-  examDetail: { fontSize: '0.75rem', color: '#8B949E' },
-  examGrade: { fontFamily: 'Georgia, serif', fontSize: '1rem', fontWeight: '700' },
-  examScore: { fontSize: '0.88rem', fontWeight: '600', width: '40px', textAlign: 'right' },
-  heatmapWrap: { display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' },
-  heatCell: { height: '24px', borderRadius: '4px' },
+  subjectScore: { fontSize: '0.8rem', fontWeight: '600', width: '38px', textAlign: 'right' },
+  examRow: { display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 0', borderBottom: '1px solid var(--border)' },
+  examNum: { fontSize: '0.72rem', color: 'var(--ink-faint)', width: '22px' },
+  examDate: { fontSize: '0.84rem', color: 'var(--ink)', fontWeight: '500' },
+  examDetail: { fontSize: '0.72rem', color: 'var(--ink-muted)' },
+  examGrade: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700' },
+  examScore: { fontSize: '0.86rem', fontWeight: '600', width: '38px', textAlign: 'right' },
+  heatWrap: { display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' },
+  heatCell: { height: '22px', borderRadius: '4px', transition: 'background 0.3s' },
 }
