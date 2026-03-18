@@ -235,7 +235,7 @@ export default function Predictions() {
       <Sidebar user={user} mobileOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       <main style={s.main}>
         <MobileHeader title="Predictions" onMenuOpen={() => setMobileMenuOpen(true)} />
-        <div style={{...s.topbar, display: 'flex'}}>
+        <div style={s.topbar}>
           <div style={s.topbarTitle}>Predictions</div>
           <div style={s.topbarBadge}>WASSCE {new Date().getFullYear()}</div>
         </div>
@@ -338,7 +338,7 @@ const s = {
   topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', background: 'var(--surface-solid)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
   topbarTitle: { fontFamily: 'var(--ff)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
   topbarBadge: { background: 'var(--accent-soft)', color: 'var(--accent-primary)', border: '1px solid var(--accent-border)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '600' },
-  content: { flex: 1, padding: '20px 20px 60px', maxWidth: '800px' },
+  content: { flex: 1, padding: '20px 24px 60px' },
   disclaimer: { background: 'var(--surface-solid)', borderRadius: 'var(--r-lg)', padding: '14px 18px', display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '14px', position: 'relative', overflow: 'hidden' },
   kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
   disclaimerTitle: { fontSize: '0.84rem', fontWeight: '600', color: 'var(--accent-light)', marginBottom: '3px' },
