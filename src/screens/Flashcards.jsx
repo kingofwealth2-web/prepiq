@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 import { gemini, parseJSON } from '../lib/gemini'
-import { supabase } from '../lib/supabase'
 import PremiumGate from '../components/PremiumGate'
 
 // Inject flip CSS into the document head once
