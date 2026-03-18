@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { supabase } from './lib/supabase'
+import { ThemeProvider } from './context/ThemeContext'
 import SignUp from './screens/SignUp'
 import Login from './screens/Login'
 import Onboarding from './screens/Onboarding'
@@ -19,7 +20,7 @@ import Predictions from './screens/Predictions'
 import Profile from './screens/Profile'
 import Ama from './components/Ama'
 
-function App() {
+function AppRoutes() {
   const [session, setSession] = useState(undefined)
 
   useEffect(() => {
@@ -28,9 +29,9 @@ function App() {
   }, [])
 
   if (session === undefined) return (
-    <div style={{ background: '#0D1117', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ fontFamily: 'Georgia, serif', fontSize: '2rem', fontWeight: '700', color: '#F0F6FC' }}>
-        Prep<span style={{ color: '#F0A500' }}>IQ</span>
+    <div style={{ background: 'var(--forest)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ fontFamily: 'var(--ff-serif)', fontSize: '2rem', fontWeight: '700', color: '#F7F3EE' }}>
+        Prep<em style={{ color: 'var(--gold-light)', fontStyle: 'italic' }}>IQ</em>
       </div>
     </div>
   )
@@ -62,4 +63,10 @@ function App() {
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppRoutes />
+    </ThemeProvider>
+  )
+}

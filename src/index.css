@@ -2,6 +2,7 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── LIGHT THEME (default) ── */
 :root {
   --forest: #1A1208;
   --forest-mid: #231A0E;
@@ -23,6 +24,9 @@
   --ink-faint: #A09688;
   --border: rgba(26,18,8,0.08);
   --border-mid: rgba(26,18,8,0.14);
+  --surface: #ffffff;
+  --surface-mid: #F7F3EE;
+  --surface-raised: #ffffff;
   --shadow-sm: 0 1px 3px rgba(26,18,8,0.06), 0 1px 2px rgba(26,18,8,0.04);
   --shadow-md: 0 4px 12px rgba(26,18,8,0.08), 0 2px 4px rgba(26,18,8,0.04);
   --ff-serif: 'Fraunces', Georgia, serif;
@@ -31,6 +35,36 @@
   --r-md: 12px;
   --r-lg: 16px;
   --r-xl: 20px;
+  --transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+/* ── DARK THEME ── */
+[data-theme="dark"] {
+  --forest: #0F0B07;
+  --forest-mid: #1C1610;
+  --forest-light: #241C12;
+  --cream: #0F0B07;
+  --cream-mid: #1C1610;
+  --cream-dark: #2A1F13;
+  --gold: #E8A020;
+  --gold-light: #F0B840;
+  --gold-pale: rgba(232,160,32,0.12);
+  --gold-border: rgba(232,160,32,0.22);
+  --teal: #00C896;
+  --teal-pale: rgba(0,200,150,0.1);
+  --red: #FF6B6B;
+  --red-pale: rgba(255,107,107,0.1);
+  --ink: #F0EBE3;
+  --ink-mid: #D4CCBF;
+  --ink-muted: #8A8070;
+  --ink-faint: #5A5045;
+  --border: rgba(240,235,227,0.07);
+  --border-mid: rgba(240,235,227,0.12);
+  --surface: #1C1610;
+  --surface-mid: #0F0B07;
+  --surface-raised: #241C12;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.3);
 }
 
 html { font-size: 16px; -webkit-font-smoothing: antialiased; }
@@ -40,6 +74,7 @@ body {
   background: var(--cream);
   color: var(--ink);
   line-height: 1.5;
+  transition: var(--transition);
 }
 
 #root {
@@ -59,16 +94,26 @@ input, select, textarea, button { font-family: var(--ff-sans); }
 input[type="text"],input[type="email"],input[type="password"],input[type="date"],select,textarea {
   width: 100%;
   padding: 11px 14px;
-  background: var(--cream);
+  background: var(--surface-mid);
   border: 1.5px solid var(--border-mid);
   border-radius: var(--r-sm);
   color: var(--ink);
   font-size: 0.9rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.2s;
   appearance: auto;
 }
 input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+
+/* Smooth theme transitions on key elements */
+*, *::before, *::after {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.1s ease, box-shadow 0.25s ease;
+}
+
+/* Override transition for things that shouldn't animate */
+button, a, [role="button"] {
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.1s ease, opacity 0.15s ease, transform 0.1s ease;
+}
 
 @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }

@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
+import { useTheme } from '../context/ThemeContext'
 
 export default function Profile() {
   const navigate = useNavigate()
+  const { isDark, toggleTheme } = useTheme()
   const [user, setUser] = useState(null)
   const [streak, setStreak] = useState(null)
   const [stats, setStats] = useState({ mocks: 0, questions: 0 })
@@ -172,15 +174,32 @@ export default function Profile() {
           <div style={s.section}>
             <h3 style={{ ...s.sectionTitle, marginBottom: '10px' }}>Settings</h3>
             <div>
+
+              {/* Theme toggle row */}
+              <div style={{ ...s.settingItem, borderBottom: '1px solid var(--border)' }} onClick={toggleTheme}>
+                <div style={{ ...s.settingIcon, background: isDark ? 'rgba(232,160,32,0.12)' : 'var(--cream-mid)' }}>
+                  {isDark ? '☀️' : '🌙'}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={s.settingName}>{isDark ? 'Light mode' : 'Dark mode'}</div>
+                  <div style={s.settingDesc}>{isDark ? 'Switch to the light theme' : 'Switch to the dark theme'}</div>
+                </div>
+                {/* Mini toggle visual */}
+                <div style={{ ...s.miniTrack, background: isDark ? 'var(--gold)' : 'var(--border-mid)' }}>
+                  <div style={{ ...s.miniThumb, transform: isDark ? 'translateX(16px)' : 'translateX(0)' }} />
+                </div>
+              </div>
+
               {[
                 { icon: '💎', name: 'Upgrade to Premium', desc: 'Unlimited AI, predictions, offline packs', path: '/premium', danger: false },
                 { icon: '🃏', name: 'Flashcards', desc: 'Study key terms and definitions', path: '/flashcards', danger: false },
                 { icon: '⚡', name: 'Quiz Game', desc: 'Rapid-fire quiz with points and streaks', path: '/game', danger: false },
                 { icon: '🚪', name: 'Log out', desc: 'Sign out of your account', path: null, danger: true },
               ].map((item, i) => (
-                <div key={i} style={{ ...s.settingItem, borderBottom: i < 3 ? '1px solid var(--border)' : 'none' }}
+                <div key={i}
+                  style={{ ...s.settingItem, borderBottom: i < 3 ? '1px solid var(--border)' : 'none' }}
                   onClick={() => item.path ? navigate(item.path) : handleLogout()}>
-                  <div style={{ ...s.settingIcon, background: item.danger ? 'var(--red-pale)' : 'var(--cream)' }}>{item.icon}</div>
+                  <div style={{ ...s.settingIcon, background: item.danger ? 'var(--red-pale)' : 'var(--surface-mid)' }}>{item.icon}</div>
                   <div style={{ flex: 1 }}>
                     <div style={{ ...s.settingName, color: item.danger ? 'var(--red)' : 'var(--ink)' }}>{item.name}</div>
                     <div style={s.settingDesc}>{item.desc}</div>
@@ -202,11 +221,11 @@ const s = {
   loadShell: { minHeight: '100vh', background: 'var(--cream)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   spinner: { width: '32px', height: '32px', border: '3px solid var(--border-mid)', borderTopColor: 'var(--gold)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
   main: { flex: 1, marginLeft: '220px', display: 'flex', flexDirection: 'column' },
-  topbar: { height: '56px', display: 'flex', alignItems: 'center', padding: '0 28px', background: '#fff', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
+  topbar: { height: '56px', display: 'flex', alignItems: 'center', padding: '0 28px', background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
   topbarTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
   content: { flex: 1, padding: '24px 28px 60px', maxWidth: '680px' },
   successBanner: { background: 'var(--teal-pale)', border: '1px solid rgba(0,158,115,0.2)', color: 'var(--teal)', padding: '10px 16px', borderRadius: 'var(--r-sm)', fontSize: '0.84rem', marginBottom: '18px' },
-  hero: { background: 'var(--forest)', borderRadius: 'var(--r-xl)', padding: '28px', display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '16px', position: 'relative', overflow: 'hidden', flexWrap: 'wrap' },
+  hero: { background: 'var(--forest-mid)', borderRadius: 'var(--r-xl)', padding: '28px', display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '16px', position: 'relative', overflow: 'hidden', flexWrap: 'wrap' },
   kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
   avatarLg: { width: '68px', height: '68px', borderRadius: '50%', background: 'var(--gold-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--ff-serif)', fontSize: '1.7rem', fontWeight: '700', color: 'var(--forest)', flexShrink: 0 },
   heroInfo: { flex: 1 },
@@ -216,24 +235,26 @@ const s = {
   badge: { background: 'rgba(200,136,10,0.2)', color: 'var(--gold-light)', border: '1px solid rgba(200,136,10,0.3)', padding: '3px 10px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '600' },
   badgeMuted: { background: 'rgba(247,243,238,0.08)', color: 'rgba(247,243,238,0.5)', padding: '3px 10px', borderRadius: '20px', fontSize: '0.72rem' },
   statsRow: { display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '10px', marginBottom: '16px' },
-  statCard: { background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '15px', textAlign: 'center', boxShadow: 'var(--shadow-sm)' },
+  statCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '15px', textAlign: 'center', boxShadow: 'var(--shadow-sm)' },
   statNum: { fontFamily: 'var(--ff-serif)', fontSize: '1.7rem', fontWeight: '700', color: 'var(--gold)', lineHeight: 1, marginBottom: '4px' },
   statLabel: { fontSize: '0.7rem', color: 'var(--ink-muted)', fontWeight: '500' },
-  section: { background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', marginBottom: '14px', boxShadow: 'var(--shadow-sm)' },
+  section: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', marginBottom: '14px', boxShadow: 'var(--shadow-sm)' },
   sectionHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' },
   sectionTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)' },
   editBtn: { background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink-muted)', fontSize: '0.78rem', padding: '6px 14px', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
   editForm: { display: 'flex', flexDirection: 'column', gap: '13px' },
   formGroup: { display: 'flex', flexDirection: 'column', gap: '5px' },
   label: { fontSize: '0.7rem', fontWeight: '600', color: 'var(--ink-muted)', letterSpacing: '0.06em', textTransform: 'uppercase' },
-  btnPrimary: { padding: '12px', background: 'var(--forest)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
+  btnPrimary: { padding: '12px', background: 'var(--forest-mid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
   detailList: { display: 'flex', flexDirection: 'column' },
   detailRow: { display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid var(--border)' },
   detailLabel: { fontSize: '0.84rem', color: 'var(--ink-muted)' },
   detailValue: { fontSize: '0.84rem', color: 'var(--ink)', fontWeight: '500' },
   settingItem: { display: 'flex', alignItems: 'center', gap: '12px', padding: '13px 0', cursor: 'pointer' },
   settingIcon: { width: '36px', height: '36px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', flexShrink: 0 },
-  settingName: { fontSize: '0.86rem', fontWeight: '600', marginBottom: '2px' },
+  settingName: { fontSize: '0.86rem', fontWeight: '600', color: 'var(--ink)', marginBottom: '2px' },
   settingDesc: { fontSize: '0.73rem', color: 'var(--ink-muted)' },
   settingArrow: { color: 'var(--ink-faint)', fontSize: '0.9rem' },
+  miniTrack: { width: '32px', height: '18px', borderRadius: '9px', position: 'relative', flexShrink: 0, transition: 'background 0.2s' },
+  miniThumb: { position: 'absolute', top: '3px', left: '3px', width: '12px', height: '12px', borderRadius: '50%', background: '#fff', transition: 'transform 0.2s ease', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' },
 }

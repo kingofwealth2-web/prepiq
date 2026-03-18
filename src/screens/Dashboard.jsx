@@ -156,11 +156,11 @@ export default function Dashboard() {
 }
 
 const s = {
-  shell: { display: 'flex', minHeight: '100vh', background: 'var(--cream)', fontFamily: 'var(--ff-sans)' },
+  shell: { display: 'flex', minHeight: '100vh', background: 'var(--surface-mid)', fontFamily: 'var(--ff-sans)' },
   loadShell: { minHeight: '100vh', background: 'var(--forest)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   loadLogo: { fontFamily: 'var(--ff-serif)', fontSize: '2.5rem', fontWeight: '700', color: '#F7F3EE' },
   main: { flex: 1, marginLeft: '220px', display: 'flex', flexDirection: 'column', minHeight: '100vh' },
-  topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', background: '#fff', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
+  topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
   topbarTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
   topbarRight: { display: 'flex', alignItems: 'center', gap: '10px' },
   daysChip: { display: 'flex', alignItems: 'center', gap: '5px', background: 'var(--red-pale)', border: '1px solid rgba(200,16,46,0.15)', padding: '5px 12px', borderRadius: '20px' },
@@ -182,7 +182,7 @@ const s = {
   heroRing: { position: 'relative', width: '90px', height: '90px', flexShrink: 0 },
   ringNum: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontFamily: 'var(--ff-serif)', fontSize: '1.6rem', fontWeight: '700', color: 'var(--gold-light)', lineHeight: 1 },
   statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '12px', marginBottom: '16px' },
-  statCard: { background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '18px 16px', boxShadow: 'var(--shadow-sm)', animation: 'fadeUp 0.4s ease both' },
+  statCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '18px 16px', boxShadow: 'var(--shadow-sm)', animation: 'fadeUp 0.4s ease both' },
   statNum: { fontFamily: 'var(--ff-serif)', fontSize: '2rem', fontWeight: '700', color: 'var(--gold)', lineHeight: 1, marginBottom: '4px' },
   statLabel: { fontSize: '0.75rem', color: 'var(--ink-mid)', fontWeight: '600', marginBottom: '2px' },
   statSub: { fontSize: '0.67rem', color: 'var(--ink-faint)' },
@@ -194,7 +194,7 @@ const s = {
   predSub: { fontSize: '0.75rem', color: 'rgba(247,243,238,0.5)' },
   premBadge: { background: 'rgba(200,136,10,0.2)', color: 'var(--gold-light)', border: '1px solid rgba(200,136,10,0.3)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.7rem', fontWeight: '700', flexShrink: 0 },
   dashGrid: { display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '14px' },
-  dashCard: { background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', boxShadow: 'var(--shadow-sm)' },
+  dashCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', boxShadow: 'var(--shadow-sm)' },
   dashCardHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' },
   dashCardTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)' },
   dashCardLink: { background: 'transparent', border: 'none', color: 'var(--gold)', fontSize: '0.78rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)', fontWeight: '600' },
@@ -204,7 +204,7 @@ const s = {
   emptySub: { fontSize: '0.75rem', color: 'var(--ink-faint)' },
   btnPrimary: { width: '100%', padding: '12px', background: 'var(--forest)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
   actionGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' },
-  actionBtn: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '14px 8px', background: 'var(--cream)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', cursor: 'pointer', fontFamily: 'var(--ff-sans)', transition: 'background 0.15s' },
+  actionBtn: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '14px 8px', background: 'var(--cream-mid)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', cursor: 'pointer', fontFamily: 'var(--ff-sans)', transition: 'background 0.15s' },
   actionIcon: { fontSize: '1.3rem' },
   actionLabel: { fontSize: '0.72rem', fontWeight: '500', color: 'var(--ink-muted)', textAlign: 'center', lineHeight: 1.3 },
 }

@@ -105,8 +105,8 @@ export default function MockResults() {
 }
 
 const s = {
-  shell: { minHeight: '100vh', background: 'var(--cream)', fontFamily: 'var(--ff-sans)' },
-  loadShell: { minHeight: '100vh', background: 'var(--cream)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  shell: { minHeight: '100vh', background: 'var(--surface-mid)', fontFamily: 'var(--ff-sans)' },
+  loadShell: { minHeight: '100vh', background: 'var(--surface-mid)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   spinner: { width: '32px', height: '32px', border: '3px solid var(--border-mid)', borderTopColor: 'var(--gold)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
   kente: { height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
   content: { maxWidth: '680px', margin: '0 auto', padding: '32px 24px' },
@@ -118,10 +118,10 @@ const s = {
   scoreRing: { position: 'relative', width: '130px', height: '130px', flexShrink: 0 },
   scoreNum: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontFamily: 'var(--ff-serif)', fontSize: '1.8rem', fontWeight: '700', color: 'var(--gold-light)' },
   statsRow: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '16px' },
-  statCard: { background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '16px', textAlign: 'center', boxShadow: 'var(--shadow-sm)' },
+  statCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '16px', textAlign: 'center', boxShadow: 'var(--shadow-sm)' },
   statNum: { fontFamily: 'var(--ff-serif)', fontSize: '2rem', fontWeight: '700', lineHeight: 1, marginBottom: '4px' },
   statLabel: { fontSize: '0.72rem', color: 'var(--ink-muted)', fontWeight: '500' },
-  section: { background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', marginBottom: '18px', boxShadow: 'var(--shadow-sm)' },
+  section: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', marginBottom: '18px', boxShadow: 'var(--shadow-sm)' },
   sectionTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '16px' },
   topicRow: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' },
   topicName: { fontSize: '0.84rem', color: 'var(--ink)', width: '140px', flexShrink: 0 },

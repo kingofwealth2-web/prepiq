@@ -155,9 +155,9 @@ export default function Predictions() {
 }
 
 const s = {
-  shell: { display: 'flex', minHeight: '100vh', background: 'var(--cream)', fontFamily: 'var(--ff-sans)' },
+  shell: { display: 'flex', minHeight: '100vh', background: 'var(--surface-mid)', fontFamily: 'var(--ff-sans)' },
   main: { flex: 1, marginLeft: '220px', display: 'flex', flexDirection: 'column' },
-  topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', background: '#fff', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
+  topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', background: 'var(--surface)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
   topbarTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
   topbarBadge: { background: 'var(--gold-pale)', color: 'var(--gold)', border: '1px solid var(--gold-border)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '600' },
   content: { flex: 1, padding: '24px 28px 60px', maxWidth: '800px' },
@@ -166,9 +166,9 @@ const s = {
   disclaimerTitle: { fontSize: '0.86rem', fontWeight: '600', color: 'var(--gold-light)', marginBottom: '4px' },
   disclaimerSub: { fontSize: '0.78rem', color: 'rgba(247,243,238,0.5)', lineHeight: 1.5 },
   subjectTabs: { display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '22px' },
-  subjectTab: { padding: '7px 15px', background: '#fff', border: '1.5px solid var(--border-mid)', borderRadius: '20px', color: 'var(--ink-muted)', fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--ff-sans)', transition: 'all 0.15s' },
+  subjectTab: { padding: '7px 15px', background: 'var(--surface)', border: '1.5px solid var(--border-mid)', borderRadius: '20px', color: 'var(--ink-muted)', fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--ff-sans)', transition: 'all 0.15s' },
   subjectTabActive: { borderColor: 'var(--gold)', color: 'var(--gold)', background: 'var(--gold-pale)' },
-  emptyCard: { background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '40px', textAlign: 'center', marginBottom: '18px', boxShadow: 'var(--shadow-sm)' },
+  emptyCard: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '40px', textAlign: 'center', marginBottom: '18px', boxShadow: 'var(--shadow-sm)' },
   emptyIcon: { fontSize: '2.5rem', marginBottom: '12px' },
   emptyTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '8px' },
   emptySub: { fontSize: '0.84rem', color: 'var(--ink-muted)', marginBottom: '20px' },
@@ -177,7 +177,7 @@ const s = {
   predHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' },
   predTitle: { fontFamily: 'var(--ff-serif)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)' },
   regenBtn: { background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink-muted)', fontSize: '0.78rem', padding: '6px 14px', cursor: 'pointer', fontFamily: 'var(--ff-sans)' },
-  predCard: { display: 'flex', background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', marginBottom: '8px', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' },
+  predCard: { display: 'flex', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', marginBottom: '8px', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' },
   predAccent: { width: '4px', flexShrink: 0 },
   predCardContent: { flex: 1, padding: '15px 18px' },
   predCardHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px', flexWrap: 'wrap', gap: '8px' },

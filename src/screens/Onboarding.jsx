@@ -128,8 +128,8 @@ export default function Onboarding() {
 }
 
 const s = {
-  shell: { minHeight: '100vh', background: 'var(--cream)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', fontFamily: 'var(--ff-sans)' },
-  card: { background: '#fff', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '40px', width: '100%', maxWidth: '500px', boxShadow: 'var(--shadow-md)', position: 'relative', overflow: 'hidden' },
+  shell: { minHeight: '100vh', background: 'var(--surface-mid)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', fontFamily: 'var(--ff-sans)' },
+  card: { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '40px', width: '100%', maxWidth: '500px', boxShadow: 'var(--shadow-md)', position: 'relative', overflow: 'hidden' },
   kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
   logo: { fontFamily: 'var(--ff-serif)', fontSize: '1.4rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '24px' },
   em: { color: 'var(--gold-light)', fontStyle: 'italic' },
@@ -140,14 +140,14 @@ const s = {
   heading: { fontFamily: 'var(--ff-serif)', fontSize: '1.3rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '6px' },
   sub: { fontSize: '0.85rem', color: 'var(--ink-muted)', marginBottom: '20px' },
   optionList: { display: 'flex', flexDirection: 'column', gap: '9px', marginBottom: '22px' },
-  option: { display: 'flex', alignItems: 'center', gap: '14px', padding: '15px 16px', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-md)', cursor: 'pointer', transition: 'all 0.15s', background: 'var(--cream)' },
+  option: { display: 'flex', alignItems: 'center', gap: '14px', padding: '15px 16px', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-md)', cursor: 'pointer', transition: 'all 0.15s', background: 'var(--surface-mid)' },
   optionSel: { borderColor: 'var(--gold)', background: 'var(--gold-pale)' },
   optDot: { width: '17px', height: '17px', borderRadius: '50%', border: '2px solid var(--border-mid)', flexShrink: 0, transition: 'all 0.15s' },
   optDotSel: { background: 'var(--gold)', borderColor: 'var(--gold)' },
   optLabel: { fontSize: '0.92rem', fontWeight: '600', color: 'var(--ink)', marginBottom: '2px' },
   optDesc: { fontSize: '0.76rem', color: 'var(--ink-muted)' },
   chipWrap: { display: 'flex', flexWrap: 'wrap', gap: '7px', marginBottom: '22px' },
-  chip: { padding: '6px 13px', borderRadius: '20px', border: '1.5px solid var(--border-mid)', background: 'var(--cream)', color: 'var(--ink-muted)', fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer', transition: 'all 0.15s' },
+  chip: { padding: '6px 13px', borderRadius: '20px', border: '1.5px solid var(--border-mid)', background: 'var(--surface-mid)', color: 'var(--ink-muted)', fontSize: '0.8rem', fontWeight: '500', cursor: 'pointer', transition: 'all 0.15s' },
   chipSel: { borderColor: 'var(--gold)', background: 'var(--gold-pale)', color: 'var(--gold)' },
   formGroup: { display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: '14px' },
   label: { fontSize: '0.72rem', fontWeight: '600', color: 'var(--ink-muted)', letterSpacing: '0.06em', textTransform: 'uppercase' },

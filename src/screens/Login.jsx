@@ -89,7 +89,7 @@ export default function Login() {
 
 const s = {
   shell: { display: 'flex', minHeight: '100vh', fontFamily: 'var(--ff-sans)' },
-  left: { width: '460px', flexShrink: 0, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px', borderRight: '1px solid var(--border)' },
+  left: { width: '460px', flexShrink: 0, background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px', borderRight: '1px solid var(--border)' },
   leftInner: { width: '100%', maxWidth: '360px', animation: 'fadeUp 0.4s ease both' },
   logo: { fontFamily: 'var(--ff-serif)', fontSize: '1.6rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '32px' },
   em: { color: 'var(--gold-light)', fontStyle: 'italic' },
