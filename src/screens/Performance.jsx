@@ -147,7 +147,7 @@ export default function Performance() {
         <div style={s.topbar}>
           <div style={s.topbarTitle}>Performance</div>
         </div>
-        <div style={s.content} className="has-bottom-nav">
+        <div style={s.content}>
 
           {/* Hero */}
           <div style={s.hero}>
@@ -271,18 +271,18 @@ const s = {
   hero: { background: 'var(--surface-solid)', borderRadius: 'var(--r-xl)', padding: '24px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', position: 'relative', overflow: 'hidden', flexWrap: 'wrap', gap: '20px' },
   kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
   heroLeft: {},
-  heroLabel: { fontSize: '0.68rem', fontWeight: '600', letterSpacing: '0.12em', color: 'rgba(247,243,238,0.45)', textTransform: 'uppercase', marginBottom: '6px' },
+  heroLabel: { fontSize: '0.68rem', fontWeight: '600', letterSpacing: '0.12em', color: 'var(--ink-muted)', textTransform: 'uppercase', marginBottom: '6px' },
   heroGrade: { fontFamily: 'var(--ff)', fontSize: '4rem', fontWeight: '700', lineHeight: 1, marginBottom: '8px' },
-  heroSub: { fontSize: '0.8rem', color: 'rgba(247,243,238,0.45)' },
+  heroSub: { fontSize: '0.8rem', color: 'var(--ink-muted)' },
   heroStats: { display: 'flex', gap: '28px', flexWrap: 'wrap' },
   heroStat: { textAlign: 'center' },
   heroStatNum: { fontFamily: 'var(--ff)', fontSize: '1.8rem', fontWeight: '700', color: 'var(--accent-light)', lineHeight: 1 },
-  heroStatLabel: { fontSize: '0.7rem', color: 'rgba(247,243,238,0.45)', marginTop: '3px' },
+  heroStatLabel: { fontSize: '0.7rem', color: 'var(--ink-muted)', marginTop: '3px' },
   emptyCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-xl)', padding: '48px', textAlign: 'center', boxShadow: 'none' },
   emptyIcon: { fontSize: '2.5rem', marginBottom: '12px' },
   emptyTitle: { fontFamily: 'var(--ff)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '8px' },
   emptySub: { fontSize: '0.84rem', color: 'var(--ink-muted)', marginBottom: '20px' },
-  btnPrimary: { padding: '12px 24px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  btnPrimary: { padding: '12px 24px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
   grid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' },
   card: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '20px', marginBottom: '14px', boxShadow: 'none' },
   cardTitle: { fontFamily: 'var(--ff)', fontSize: '1rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '16px' },

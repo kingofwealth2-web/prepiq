@@ -250,7 +250,7 @@ const s = {
   resultCorrect: { background: 'var(--green-soft)', border: '1px solid rgba(0,158,115,0.25)', color: 'var(--green)', padding: '12px 16px', borderRadius: 'var(--r-sm)', fontSize: '0.9rem', fontWeight: '600', marginBottom: '14px' },
   resultWrong: { background: 'var(--red-soft)', border: '1px solid rgba(200,16,46,0.2)', color: 'var(--red)', padding: '12px 16px', borderRadius: 'var(--r-sm)', fontSize: '0.9rem', fontWeight: '600', marginBottom: '14px' },
   actions: { display: 'flex', gap: '10px', marginBottom: '18px' },
-  btnPrimary: { flex: 1, padding: '13px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  btnPrimary: { flex: 1, padding: '13px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
   btnOutline: { flex: 1, padding: '13px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
   explainPanel: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', overflow: 'hidden', boxShadow: 'none' },
   explainHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: '1px solid var(--border)' },

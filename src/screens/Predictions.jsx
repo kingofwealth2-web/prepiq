@@ -239,7 +239,7 @@ export default function Predictions() {
           <div style={s.topbarTitle}>Predictions</div>
           <div style={s.topbarBadge}>WASSCE {new Date().getFullYear()}</div>
         </div>
-        <div style={s.content} className="has-bottom-nav">
+        <div style={s.content}>
 
           <div style={s.disclaimer}>
             <div style={s.kente} />
@@ -342,7 +342,7 @@ const s = {
   disclaimer: { background: 'var(--surface-solid)', borderRadius: 'var(--r-lg)', padding: '14px 18px', display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '14px', position: 'relative', overflow: 'hidden' },
   kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
   disclaimerTitle: { fontSize: '0.84rem', fontWeight: '600', color: 'var(--accent-light)', marginBottom: '3px' },
-  disclaimerSub: { fontSize: '0.76rem', color: 'rgba(247,243,238,0.5)', lineHeight: 1.5 },
+  disclaimerSub: { fontSize: '0.76rem', color: 'var(--ink-muted)', lineHeight: 1.5 },
   fallbackBanner: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '14px 16px', display: 'flex', gap: '12px', marginBottom: '14px', boxShadow: 'none' },
   fallbackIcon: { fontSize: '1.3rem', flexShrink: 0 },
   fallbackTitle: { fontSize: '0.86rem', fontWeight: '600', color: 'var(--ink)', marginBottom: '3px' },
@@ -370,5 +370,5 @@ const s = {
   predRationale: { fontSize: '0.76rem', color: 'var(--ink-muted)', marginBottom: '10px', lineHeight: 1.4 },
   predBar: { height: '5px', background: 'rgba(255,255,255,.06)', borderRadius: '3px', overflow: 'hidden' },
   predBarFill: { height: '100%', borderRadius: '3px', transition: 'width 1s ease' },
-  btnPrimary: { width: '100%', padding: '13px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)', marginTop: '4px' },
+  btnPrimary: { width: '100%', padding: '13px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)', marginTop: '4px' },
 }

@@ -184,5 +184,5 @@ const s = {
   optText: { fontSize: '0.92rem', color: 'var(--ink)', flex: 1 },
   navRow: { display: 'flex', gap: '10px', justifyContent: 'space-between' },
   navBtn: { padding: '12px 24px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
-  btnPrimary: { padding: '12px 32px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  btnPrimary: { padding: '12px 32px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
 }

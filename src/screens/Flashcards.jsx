@@ -327,7 +327,7 @@ const s = {
   cardSide: { fontSize: '0.65rem', fontWeight: '700', letterSpacing: '0.14em', color: 'var(--accent-primary)', marginBottom: '10px', textTransform: 'uppercase' },
   cardTopic: { fontSize: '0.72rem', color: 'var(--ink-muted)', marginBottom: '14px', background: 'var(--bg)', padding: '3px 10px', borderRadius: '20px' },
   cardFront: { fontFamily: 'var(--ff)', fontSize: '1.25rem', fontWeight: '700', color: 'var(--ink)', lineHeight: 1.4 },
-  cardBack: { fontSize: '0.96rem', color: '#F7F3EE', lineHeight: 1.65 },
+  cardBack: { fontSize: '0.96rem', color: 'var(--ink)', lineHeight: 1.65 },
   tapHint: { position: 'absolute', bottom: '14px', fontSize: '0.7rem', color: 'var(--ink-faint)' },
   actions: { display: 'flex', gap: '10px', marginBottom: '22px' },
   btnKnow: { flex: 1, padding: '13px', background: 'var(--green-soft)', border: '1.5px solid rgba(0,158,115,0.25)', borderRadius: 'var(--r-md)', color: 'var(--green)', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
@@ -341,6 +341,6 @@ const s = {
   finishedNum: { fontFamily: 'var(--ff)', fontSize: '2.5rem', fontWeight: '700', lineHeight: 1 },
   finishedLabel: { fontSize: '0.76rem', color: 'var(--ink-muted)', marginTop: '4px' },
   finishedActions: { display: 'flex', flexDirection: 'column', gap: '9px' },
-  btnPrimary: { width: '100%', padding: '12px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  btnPrimary: { width: '100%', padding: '12px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
   btnOutline: { width: '100%', padding: '12px', background: 'transparent', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
 }

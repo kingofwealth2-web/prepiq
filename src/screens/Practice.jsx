@@ -98,11 +98,11 @@ Do not guess. If you are not sure of the answer, choose a different question top
       <Sidebar user={user} mobileOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       <main style={s.main}>
         <MobileHeader title="Practice" onMenuOpen={() => setMobileMenuOpen(true)} />
-        <div style={{...s.topbar, display: 'flex'}}>
+        <div style={s.topbar}>
           <div style={s.topbarTitle}>Practice</div>
           <button style={s.btnPrimary} onClick={() => navigate('/question/random')}>Random question</button>
         </div>
-        <div style={s.content} className="has-bottom-nav">
+        <div style={s.content}>
 
           {/* Mode toggle */}
           <div style={s.modeToggle}>
@@ -216,11 +216,11 @@ const s = {
   main: { flex: 1, marginLeft: 'var(--sidebar-w)', display: 'flex', flexDirection: 'column' },
   topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px', background: 'var(--surface-solid)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
   topbarTitle: { fontFamily: 'var(--ff)', fontSize: '1.05rem', fontWeight: '700', color: 'var(--ink)' },
-  btnPrimary: { padding: '9px 18px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.84rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  btnPrimary: { padding: '9px 18px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.84rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
   content: { flex: 1, padding: '24px 28px 80px' },
   modeToggle: { display: 'flex', background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '4px', marginBottom: '18px', width: 'fit-content', gap: '3px' },
   modeBtn: { padding: '7px 18px', borderRadius: '9px', border: 'none', background: 'transparent', color: 'var(--ink-muted)', fontSize: '0.84rem', fontWeight: '500', cursor: 'pointer', fontFamily: 'var(--ff)', transition: 'all 0.15s' },
-  modeBtnActive: { background: 'var(--surface-solid)', color: '#F7F3EE', fontWeight: '600' },
+  modeBtnActive: { background: 'var(--surface-solid)', color: 'var(--ink)', fontWeight: '600' },
   filterRow: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' },
   select: { padding: '8px 12px', background: 'var(--surface-solid)', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontSize: '0.84rem', fontFamily: 'var(--ff)', cursor: 'pointer', outline: 'none', width: 'auto' },
   clearBtn: { padding: '8px 14px', background: 'transparent', border: '1.5px solid rgba(200,16,46,0.25)', borderRadius: 'var(--r-sm)', color: 'var(--red)', fontSize: '0.8rem', cursor: 'pointer', fontFamily: 'var(--ff)' },

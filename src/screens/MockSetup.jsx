@@ -106,5 +106,5 @@ const s = {
   formGroup: { display: 'flex', flexDirection: 'column', gap: '5px' },
   label: { fontSize: '0.7rem', fontWeight: '600', color: 'var(--ink-muted)', letterSpacing: '0.06em', textTransform: 'uppercase' },
   selectEl: { padding: '10px 12px', background: 'var(--bg)', border: '1.5px solid var(--border-mid)', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontSize: '0.86rem', fontFamily: 'var(--ff)', cursor: 'pointer', outline: 'none' },
-  btnPrimary: { width: '100%', padding: '13px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  btnPrimary: { width: '100%', padding: '13px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
 }

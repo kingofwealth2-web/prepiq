@@ -178,7 +178,7 @@ export default function StudyPlan() {
       <Sidebar user={user} mobileOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       <main style={s.main}>
         <MobileHeader title="Study Plan" onMenuOpen={() => setMobileMenuOpen(true)} />
-        <div style={{...s.topbar, display: 'flex'}}>
+        <div style={s.topbar}>
           <div style={s.topbarTitle}>Study Plan</div>
           {getDaysLeft() !== null && (
             <div style={s.countdown}>
@@ -187,7 +187,7 @@ export default function StudyPlan() {
             </div>
           )}
         </div>
-        <div style={s.content} className="has-bottom-nav">
+        <div style={s.content}>
 
           {/* Weak topics insight */}
           {weakTopics.length > 0 && (
@@ -310,13 +310,13 @@ const s = {
   weakCard: { background: 'var(--surface-solid)', borderRadius: 'var(--r-xl)', padding: '22px', marginBottom: '14px', position: 'relative', overflow: 'hidden' },
   kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
   weakHeader: { marginBottom: '14px' },
-  weakTitle: { fontSize: '0.92rem', fontWeight: '700', color: '#F7F3EE', marginBottom: '2px', fontFamily: 'var(--ff)' },
-  weakSub: { fontSize: '0.72rem', color: 'rgba(247,243,238,0.45)' },
+  weakTitle: { fontSize: '0.92rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '2px', fontFamily: 'var(--ff)' },
+  weakSub: { fontSize: '0.72rem', color: 'var(--ink-muted)' },
   weakList: { display: 'flex', flexDirection: 'column', gap: '10px' },
   weakItem: { display: 'flex', alignItems: 'center', gap: '12px' },
   weakInfo: { width: '140px', flexShrink: 0 },
-  weakTopic: { fontSize: '0.82rem', fontWeight: '600', color: '#F7F3EE', lineHeight: 1.2 },
-  weakSubject: { fontSize: '0.68rem', color: 'rgba(247,243,238,0.4)', marginTop: '2px' },
+  weakTopic: { fontSize: '0.82rem', fontWeight: '600', color: 'var(--ink)', lineHeight: 1.2 },
+  weakSubject: { fontSize: '0.68rem', color: 'var(--ink-faint)', marginTop: '2px' },
   weakBar: { flex: 1, height: '5px', background: 'rgba(247,243,238,0.1)', borderRadius: '3px', overflow: 'hidden' },
   weakFill: { height: '100%', borderRadius: '3px', transition: 'width 1s ease' },
   weakScore: { fontSize: '0.8rem', fontWeight: '600', width: '36px', textAlign: 'right' },
@@ -324,7 +324,7 @@ const s = {
   noDataIcon: { fontSize: '1.4rem', flexShrink: 0 },
   noDataTitle: { fontSize: '0.86rem', fontWeight: '600', color: 'var(--ink)', marginBottom: '2px' },
   noDataSub: { fontSize: '0.76rem', color: 'var(--ink-muted)', lineHeight: 1.4 },
-  btnSmall: { padding: '8px 14px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.78rem', cursor: 'pointer', fontFamily: 'var(--ff)', flexShrink: 0 },
+  btnSmall: { padding: '8px 14px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.78rem', cursor: 'pointer', fontFamily: 'var(--ff)', flexShrink: 0 },
   todayHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' },
   todayTitle: { fontFamily: 'var(--ff)', fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)' },
   progressPill: { background: 'rgba(255,255,255,.06)', color: 'var(--ink-muted)', padding: '4px 12px', borderRadius: '20px', fontSize: '0.76rem', fontWeight: '500' },

@@ -114,7 +114,7 @@ export default function Dashboard() {
         )}
 
         <MobileHeader title="Dashboard" onMenuOpen={() => setMobileMenuOpen(true)} />
-        <div style={{...s.topbar, display: 'flex'}}>
+        <div style={s.topbar}>
           <div style={s.topbarTitle}>Dashboard</div>
           <div style={s.topbarRight}>
             {getDaysLeft() !== null && (
@@ -130,7 +130,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div style={s.content} className="has-bottom-nav">
+        <div style={s.content}>
           {/* Hero */}
           <div style={s.hero}>
             <div style={s.kente} />
@@ -225,7 +225,7 @@ export default function Dashboard() {
 const s = {
   shell: { display: 'flex', minHeight: '100vh', background: 'var(--bg)', fontFamily: 'var(--ff)' },
   loadShell: { minHeight: '100vh', background: 'var(--surface-solid)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  loadLogo: { fontFamily: 'var(--ff)', fontSize: '2.5rem', fontWeight: '700', color: '#F7F3EE' },
+  loadLogo: { fontFamily: 'var(--ff)', fontSize: '2.5rem', fontWeight: '700', color: 'var(--ink)' },
   main: { flex: 1, marginLeft: 'var(--sidebar-w)', display: 'flex', flexDirection: 'column', minHeight: '100vh' },
   offlineBanner: { background: 'var(--accent-soft)', borderBottom: '1px solid var(--accent-border)', color: 'var(--accent-primary)', padding: '10px 28px', fontSize: '0.84rem', fontWeight: '500' },
   topbar: { height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', background: 'var(--surface-solid)', borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 40 },
@@ -241,11 +241,11 @@ const s = {
   hero: { background: 'var(--surface-solid)', borderRadius: 'var(--r-xl)', padding: '24px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', position: 'relative', overflow: 'hidden', animation: 'fadeUp 0.4s ease both' },
   kente: { position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'repeating-linear-gradient(90deg,#C8880A 0,#C8880A 18px,#009E73 18px,#009E73 36px,#C8102E 36px,#C8102E 54px,#1A5DC8 54px,#1A5DC8 72px)' },
   heroLeft: { flex: 1, minWidth: 0 },
-  heroGreeting: { fontSize: '0.78rem', color: 'rgba(247,243,238,0.5)', marginBottom: '2px', fontWeight: '500' },
-  heroName: { fontFamily: 'var(--ff)', fontSize: '1.8rem', fontWeight: '700', color: '#F7F3EE', marginBottom: '12px', letterSpacing: '-0.02em', lineHeight: 1.1 },
+  heroGreeting: { fontSize: '0.78rem', color: 'var(--ink-muted)', marginBottom: '2px', fontWeight: '500' },
+  heroName: { fontFamily: 'var(--ff)', fontSize: '1.8rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '12px', letterSpacing: '-0.02em', lineHeight: 1.1 },
   heroBadges: { display: 'flex', gap: '7px', flexWrap: 'wrap' },
   badgeGold: { background: 'rgba(200,136,10,0.2)', color: 'var(--accent-light)', border: '1px solid rgba(200,136,10,0.3)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '600' },
-  badgeNeutral: { background: 'rgba(247,243,238,0.08)', color: 'rgba(247,243,238,0.55)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '500' },
+  badgeNeutral: { background: 'rgba(247,243,238,0.08)', color: 'var(--ink-muted)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '500' },
   badgeTeal: { background: 'rgba(0,158,115,0.15)', color: '#00C896', padding: '4px 10px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: '500' },
   heroRing: { position: 'relative', width: '90px', height: '90px', flexShrink: 0 },
   ringNum: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', fontFamily: 'var(--ff)', fontSize: '1.5rem', fontWeight: '700', color: 'var(--accent-light)', lineHeight: 1 },
@@ -258,8 +258,8 @@ const s = {
   predKente: { position: 'absolute', top: 0, left: 0, bottom: 0, width: '3px', background: 'repeating-linear-gradient(180deg,#C8880A 0,#C8880A 12px,#009E73 12px,#009E73 24px,#C8102E 24px,#C8102E 36px,#1A5DC8 36px,#1A5DC8 48px)' },
   predIcon: { fontSize: '1.4rem', flexShrink: 0, marginLeft: '8px' },
   predText: { flex: 1, minWidth: 0 },
-  predTitle: { fontSize: '0.84rem', fontWeight: '600', color: '#F7F3EE', marginBottom: '2px' },
-  predSub: { fontSize: '0.72rem', color: 'rgba(247,243,238,0.45)' },
+  predTitle: { fontSize: '0.84rem', fontWeight: '600', color: 'var(--ink)', marginBottom: '2px' },
+  predSub: { fontSize: '0.72rem', color: 'var(--ink-muted)' },
   premBadge: { background: 'rgba(200,136,10,0.2)', color: 'var(--accent-light)', border: '1px solid rgba(200,136,10,0.3)', padding: '3px 8px', borderRadius: '20px', fontSize: '0.68rem', fontWeight: '700', flexShrink: 0 },
   dashGrid: { display: 'grid', gridTemplateColumns: '1fr', gap: '12px' },
   dashCard: { background: 'var(--surface-solid)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', padding: '18px', boxShadow: 'none' },
@@ -270,7 +270,7 @@ const s = {
   emptyIcon: { fontSize: '2rem', marginBottom: '8px' },
   emptyText: { fontSize: '0.88rem', fontWeight: '600', color: 'var(--ink)', marginBottom: '4px' },
   emptySub: { fontSize: '0.75rem', color: 'var(--ink-faint)' },
-  btnPrimary: { width: '100%', padding: '12px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: '#F7F3EE', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
+  btnPrimary: { width: '100%', padding: '12px', background: 'var(--surface-solid)', border: 'none', borderRadius: 'var(--r-sm)', color: 'var(--ink)', fontWeight: '600', fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'var(--ff)' },
   actionGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' },
   actionBtn: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', padding: '14px 8px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', cursor: 'pointer', fontFamily: 'var(--ff)', transition: 'background 0.15s' },
   actionIcon: { fontSize: '1.3rem' },
